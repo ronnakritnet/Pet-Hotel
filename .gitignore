@@ -1,0 +1,41 @@
+# Compiled Class & Package files
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+
+# Build outputs & NetBeans build directories
+/nbbuild/
+/dist/
+/build/
+
+# NetBeans-specific files
+**/nbproject/private/
+**/nbproject/Makefile-impl.xml
+**/nbproject/Package-*.bash
+**/nbproject/build-impl.xml
+**/nbproject/genfiles.properties
+nb-configuration.xml
+nbactions.xml
+
+# Prevent local test data from causing conflicts
+src/resources/data/*.json
+src/resources/data/*.csv
+*.bak
+*.tmp
+
+# OS generated & sensitive property files
+.DS_Store
+Thumbs.db
+db.properties
+
+# IDE configurations (IntelliJ / Eclipse)
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+.factorypath
