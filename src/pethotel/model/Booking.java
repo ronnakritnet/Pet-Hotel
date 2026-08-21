@@ -34,6 +34,53 @@ public class Booking {
         }
         return sum;
     }
-    
-    
+
+    public String getBookingId() {
+        return bookingId;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Pet getPet() {
+        return pet;
+    }
+
+    public void setPet(Pet pet) {
+        this.pet = pet;
+    }
+
+    public Map<LocalDate, Room> getRoomAllocations() {
+        return roomAllocations;
+    }
+
+    public void setRoomAllocations(Map<LocalDate, Room> roomAllocations) {
+        this.roomAllocations = roomAllocations;
+    }
+
+    public LocalDate getCheckInDate() {
+        return checkInDate;
+    }
+
+    public void setCheckInDate(LocalDate checkInDate) {
+        this.checkInDate = checkInDate;
+    }
+
+    public LocalDate getCheckOutDate() {
+        return checkOutDate;
+    }
+
+    public void setCheckOutDate(LocalDate checkOutDate) {
+        this.checkOutDate = checkOutDate;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
 }
