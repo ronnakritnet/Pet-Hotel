@@ -8,10 +8,13 @@ public abstract class Pet {
     private double weight;
 
     public Pet(String petId, String name, String breed, double weight) {
-        this.petId = petId;
-        this.name = name;
-        this.breed = breed;
-        this.weight = weight;
+        if (petId == null || petId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Pet ID is required");
+        }
+        this.petId = petId.trim();
+        setName(name);
+        setBreed(breed);
+        setWeight(weight);
     }
 
     public abstract String getPetType();
@@ -25,7 +28,10 @@ public abstract class Pet {
     }
 
     public void setName(String name) {
-        this.name = name;
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Pet name is required");
+        }
+        this.name = name.trim();
     }
 
     public String getBreed() {
@@ -33,7 +39,10 @@ public abstract class Pet {
     }
 
     public void setBreed(String breed) {
-        this.breed = breed;
+        if (breed == null || breed.trim().isEmpty()) {
+            throw new IllegalArgumentException("Breed is required");
+        }
+        this.breed = breed.trim();
     }
 
     public double getWeight() {
@@ -41,6 +50,9 @@ public abstract class Pet {
     }
 
     public void setWeight(double weight) {
+        if (weight <= 0) {
+            throw new IllegalArgumentException("Pet weight must be > 0");
+        }
         this.weight = weight;
     }
 
