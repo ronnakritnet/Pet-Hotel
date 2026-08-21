@@ -20,11 +20,7 @@ public class Booking {
     private double totalPrice;
     private LocalDateTime actualCheckOut;
 
-    public Booking(String bookingId, Customer customer, Pet pet,
-            Map<LocalDate, Room> roomAllocations,
-            LocalDate checkInDate, LocalTime checkInTime,
-            LocalDate checkOutDate, LocalTime checkOutTime,
-            boolean extraWalking, boolean extraGrooming) {
+    public Booking(String bookingId, Customer customer, Pet pet,Map<LocalDate, Room> roomAllocations,LocalDate checkInDate, LocalTime checkInTime,LocalDate checkOutDate, LocalTime checkOutTime,boolean extraWalking, boolean extraGrooming) {
         this.bookingId = bookingId;
         this.customer = customer;
         this.pet = pet;
