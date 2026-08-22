@@ -1,50 +1,48 @@
 package pethotel.repository;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class BackupManager {
 
-    private Path dataFolder;
-
-    public BackupManager() {
-        this(Paths.get("src", "resources", "data"));
-    }
-
-    public BackupManager(Path dataFolder) {
-        this.dataFolder = dataFolder;
-    }
+    private static final String DATA_DIR = "resources/data/";
+    private static final String[] TARGET_FILES = {
+        "bookings.json",
+        "customers.json",
+        "rooms.json"
+    };
 
     public static void backupData() {
         BackupManager backupManager = new BackupManager();
-        backupManager.backup();
+        backupManager.executeBackup();
     }
 
-    public void backup() {
-        String[] files = {
-            "customers.json",
-            "rooms.json",
-            "bookings.json"
-        };
+    public void executeBackup() {
+        File dataDir = new File(DATA_DIR);
 
-        try {
-            Files.createDirectories(dataFolder);
+        if (!dataDir.exists()) {
+            dataDir.mkdirs();
+            return;
+        }
 
-            for (String fileName : files) {
-                Path source = dataFolder.resolve(fileName);
-                Path backup = dataFolder.resolve(fileName + ".bak");
+        for (String filename : TARGET_FILES) {
+            File sourceFile = new File(dataDir, filename);
 
-                if (Files.exists(source)) {
-                    Files.copy(source, backup,
-                            StandardCopyOption.REPLACE_EXISTING);
+            if (sourceFile.exists()) {
+                File backupFile = new File(dataDir, filename + ".bak");
+
+                try {
+                    Files.copy(
+                            sourceFile.toPath(),
+                            backupFile.toPath(),
+                            StandardCopyOption.REPLACE_EXISTING
+                    );
+                } catch (IOException e) {
+                    System.err.println("Backup Error: " + e.getMessage());
                 }
             }
-        } catch (IOException e) {
-            System.out.println("Cannot backup JSON files: "
-                    + e.getMessage());
         }
     }
 }

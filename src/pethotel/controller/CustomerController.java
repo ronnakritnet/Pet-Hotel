@@ -22,9 +22,7 @@ public class CustomerController {
             return false;
         }
 
-        dataManager.getCustomers().add(customer);
-        dataManager.saveCustomers();
-        return true;
+        return dataManager.saveCustomer(customer);
     }
 
     public Customer findCustomerByPhone(String phone) {
@@ -32,10 +30,13 @@ public class CustomerController {
             return null;
         }
 
-        String searchPhone = normalizePhone(phone);
+        String searchPhone = phone.replaceAll("[^0-9]", "");
 
         for (Customer customer : dataManager.getCustomers()) {
-            if (normalizePhone(customer.getPhoneNumber()).equals(searchPhone)) {
+            String customerPhone = customer.getPhoneNumber()
+                    .replaceAll("[^0-9]", "");
+
+            if (customerPhone.equals(searchPhone)) {
                 return customer;
             }
         }
@@ -43,18 +44,8 @@ public class CustomerController {
         return null;
     }
 
-    public boolean addPet(Customer customer, Pet pet) {
-        if (customer == null || pet == null) {
-            return false;
-        }
-
-        boolean added = dataManager.addPet(customer, pet);
-
-        if (added) {
-            dataManager.saveCustomers();
-        }
-
-        return added;
+    public void addPet(Customer customer, Pet pet) {
+        dataManager.savePet(customer, pet);
     }
 
     public ArrayList<Pet> getPets(Customer customer) {
@@ -64,19 +55,17 @@ public class CustomerController {
     public String createPetId() {
         int number = 1;
 
-        for (Customer customer : dataManager.getCustomers()) {
-            for (Pet pet : dataManager.getPets(customer)) {
-                String id = pet.getPetId();
+        for (Pet pet : dataManager.getAllPets()) {
+            String id = pet.getPetId();
 
-                if (id != null && id.startsWith("P")) {
-                    try {
-                        int oldNumber = Integer.parseInt(id.substring(1));
-                        if (oldNumber >= number) {
-                            number = oldNumber + 1;
-                        }
-                    } catch (NumberFormatException e) {
-                        // Ignore IDs that are not in P<number> format.
+            if (id != null && id.startsWith("P")) {
+                try {
+                    int oldNumber = Integer.parseInt(id.substring(1));
+                    if (oldNumber >= number) {
+                        number = oldNumber + 1;
                     }
+                } catch (NumberFormatException e) {
+                    // Ignore IDs that are not P<number>.
                 }
             }
         }
@@ -86,13 +75,5 @@ public class CustomerController {
 
     public ArrayList<Customer> getCustomers() {
         return dataManager.getCustomers();
-    }
-
-    private String normalizePhone(String phone) {
-        if (phone == null) {
-            return "";
-        }
-
-        return phone.replaceAll("[^0-9]", "");
     }
 }
