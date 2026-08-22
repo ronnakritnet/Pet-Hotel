@@ -8,6 +8,6 @@ public class Dog extends Pet {
 
     @Override
     public String getPetType() {
-        return "Dog";
+        return "DOG";
     }
 }

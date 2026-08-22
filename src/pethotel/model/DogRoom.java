@@ -2,15 +2,25 @@ package pethotel.model;
 
 public class DogRoom extends Room {
 
-    public DogRoom(String roomId, String roomName,double pricePerNight, double maxWeight) {
-        super(roomId, roomName, pricePerNight, maxWeight);
+    public DogRoom(String roomId, String roomName, double pricePerNight, double maxWeightLimit) {
+        super(roomId, roomName, pricePerNight, maxWeightLimit);
     }
+
     @Override
     public String getRoomType() {
-        return "Dog Room";
+        return "DOG_ROOM";
     }
+
     @Override
     public boolean canAccommodate(Pet pet) {
-        return pet instanceof Dog && pet.getWeight() <= maxWeight;
+        if (pet == null) {
+            return false;
+        }
+        
+        if(!(pet instanceof Dog)) {
+            return false;
+        }
+        
+        return pet.getWeight() <= this.getMaxWeightLimit();
     }
 }

@@ -1,40 +1,61 @@
 package pethotel.model;
 
 public abstract class Room {
-    protected String roomId;
-    protected String roomName;
-    protected double pricePerNight;
-    protected double maxWeight;
-    protected int capacity;
 
-    public Room(String roomId, String roomName,double pricePerNight, double maxWeight) {
-        this.roomId = roomId;
-        this.roomName = roomName;
-        this.pricePerNight = pricePerNight;
-        this.maxWeight = maxWeight;
-        this.capacity = 5;
+    private String roomId;
+    private String roomName;
+    private double pricePerNight;
+    private double maxWeightLimit;
+
+    public Room(String roomId, String roomName, double pricePerNight, double maxWeightLimit) {
+        if (roomId == null || roomId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Room ID is required");
+        }
+        this.roomId = roomId.trim();
+        setRoomName(roomName);
+        setPricePerNight(pricePerNight);
+        setMaxWeightLimit(maxWeightLimit);
     }
 
     public abstract String getRoomType();
+
     public abstract boolean canAccommodate(Pet pet);
+
     public String getRoomId() {
         return roomId;
     }
+
     public String getRoomName() {
         return roomName;
     }
+
+    public void setRoomName(String roomName) {
+        if (roomName == null || roomName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Room name is required");
+        }
+        this.roomName = roomName.trim();;
+    }
+
     public double getPricePerNight() {
         return pricePerNight;
     }
-    public double getMaxWeight() {
-        return maxWeight;
+
+    public void setPricePerNight(double pricePerNight) {
+        if (pricePerNight <= 0) {
+            throw new IllegalArgumentException("Price per night must be > 0");
+        }
+        this.pricePerNight = pricePerNight;
     }
-    public int getCapacity() {
-        return capacity;
+
+    public double getMaxWeightLimit() {
+        return maxWeightLimit;
     }
-    public void printInfo() {
-        System.out.println(roomId + " - " + roomName
-                + " - " + pricePerNight + " baht/day"
-                + " - Capacity: " + capacity);
+
+    public void setMaxWeightLimit(double maxWeightLimit) {
+        if (maxWeightLimit <= 0) {
+            throw new IllegalArgumentException("Max weight limit must be > 0");
+        }
+        this.maxWeightLimit = maxWeightLimit;
     }
+
 }

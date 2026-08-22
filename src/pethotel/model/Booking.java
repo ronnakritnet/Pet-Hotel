@@ -1,8 +1,6 @@
 package pethotel.model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Map;
 
 public class Booking {
@@ -12,54 +10,89 @@ public class Booking {
     private Pet pet;
     private Map<LocalDate, Room> roomAllocations;
     private LocalDate checkInDate;
-    private LocalTime checkInTime;
     private LocalDate checkOutDate;
-    private LocalTime checkOutTime;
+
     private boolean extraWalking;
     private boolean extraGrooming;
-    private double totalPrice;
-    private LocalDateTime actualCheckOut;
 
-    public Booking(String bookingId, Customer customer, Pet pet,Map<LocalDate, Room> roomAllocations,LocalDate checkInDate, LocalTime checkInTime,LocalDate checkOutDate, LocalTime checkOutTime,boolean extraWalking, boolean extraGrooming) {
-        this.bookingId = bookingId;
+    private double totalPrice;
+
+    public Booking(String bookingId, Customer customer, Pet pet, Map<LocalDate, Room> roomAllocations,
+            LocalDate checkInDate, LocalDate checkOutDate, boolean extraWalking, boolean extraGrooming) {
+        if (bookingId == null || bookingId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Book ID is required");
+        }
+        if (customer == null) {
+            throw new IllegalArgumentException("Customer is required");
+        }
+        if (pet == null) {
+            throw new IllegalArgumentException("Pet is required");
+        }
+        this.bookingId = bookingId.trim();
         this.customer = customer;
         this.pet = pet;
-        this.roomAllocations = roomAllocations;
         this.checkInDate = checkInDate;
-        this.checkInTime = checkInTime;
         this.checkOutDate = checkOutDate;
-        this.checkOutTime = checkOutTime;
+        this.roomAllocations = roomAllocations;
         this.extraWalking = extraWalking;
         this.extraGrooming = extraGrooming;
-        this.totalPrice = calculatePrice();
+
+        validateDateRange();
+        validateRoomAllocations();
+
+        updateTotalPrice();
     }
-    private double calculatePrice() {
-        double total = 0;
-        for (Room room : roomAllocations.values()) {
-            total += room.getPricePerNight();
+
+    private void validateDateRange() {
+        if (checkInDate == null || checkOutDate == null) {
+            throw new IllegalArgumentException("Both check-in and check-out dates are required");
+        }
+        if (!checkOutDate.isAfter(checkInDate)) {
+            throw new IllegalArgumentException("Check-out date must be at least 1 day after check-in date");
+        }
+    }
+
+    private void validateRoomAllocations() {
+        if (roomAllocations == null || roomAllocations.isEmpty()) {
+            throw new IllegalArgumentException("Room allocation must be for at least 1 day in the table");
+        }
+
+        for (Map.Entry<LocalDate, Room> entry : roomAllocations.entrySet()) {
+            LocalDate date = entry.getKey();
+            Room room = entry.getValue();
+
+            if (date.isBefore(checkInDate) || !date.isBefore(checkOutDate)) {
+                throw new IllegalArgumentException("Room allocation date (" + date + ") must be within the stay period.");
+            }
+
+            if (room == null) {
+                throw new IllegalArgumentException("Room data for " + date + " is invalid (Null)");
+            }
+
+            if (pet != null && !room.canAccommodate(pet)) {
+                throw new IllegalArgumentException("Room " + room.getRoomName() + " cannot accommodate " + pet.getName()
+                        + " on " + date + " (Pet type mismatch or weight exceeds " + room.getMaxWeightLimit() + " kg limit)");
+            }
+        }
+    }
+
+    private void updateTotalPrice() {
+        double sum = 0.0;
+        if (roomAllocations != null) {
+            for (Room room : roomAllocations.values()) {
+                sum += room.getPricePerNight();
+            }
         }
         if (extraWalking) {
-            total += 100;
+            sum += 100.0;
         }
         if (extraGrooming) {
-            total += 300;
+            sum += 300.0;
         }
-        return total;
+        this.totalPrice = sum;
     }
-
-    public String getStatus() {
-        LocalDateTime now = LocalDateTime.now();
-
-        if (actualCheckOut != null) {
-            return "CHECKED OUT";
-        } else if (now.isBefore(getCheckInDateTime())) {
-            return "UPCOMING";
-        } else if (now.isBefore(getCheckOutDateTime())) {
-            return "STAYING NOW";
-        } else {
-            return "COMPLETED";
-        }
-    }
+    
+    // GETTERS & SETTERS
 
     public String getBookingId() {
         return bookingId;
@@ -69,51 +102,82 @@ public class Booking {
         return customer;
     }
 
+    public void setCustomer(Customer customer) {
+        if (customer == null) {
+            throw new IllegalArgumentException("Customer is required");
+        }
+        this.customer = customer;
+    }
+
     public Pet getPet() {
         return pet;
     }
 
-    public Room getRoom() {
-        return roomAllocations.values().iterator().next();
+    public void setPet(Pet pet) {
+        if (pet == null) {
+            throw new IllegalArgumentException("Pet is required");
+        }
+        this.pet = pet;
+
+        if (roomAllocations != null) {
+            validateRoomAllocations();
+        }
     }
 
     public Map<LocalDate, Room> getRoomAllocations() {
         return roomAllocations;
     }
 
-    public LocalDateTime getCheckInDateTime() {
-        return LocalDateTime.of(checkInDate, checkInTime);
+    public void setRoomAllocations(Map<LocalDate, Room> roomAllocations) {
+        this.roomAllocations = roomAllocations;
+        validateRoomAllocations();
+        updateTotalPrice();
     }
 
-    public LocalDateTime getCheckOutDateTime() {
-        return LocalDateTime.of(checkOutDate, checkOutTime);
+    public LocalDate getCheckInDate() {
+        return checkInDate;
     }
 
-    public LocalDateTime getEndDateTime() {
-        if (actualCheckOut != null) {
-            return actualCheckOut;
+    public void setCheckInDate(LocalDate checkInDate) {
+        this.checkInDate = checkInDate;
+        validateDateRange();
+        if (roomAllocations != null) {
+            validateRoomAllocations();
         }
-        return getCheckOutDateTime();
     }
 
-    public void checkOut() {
-        actualCheckOut = LocalDateTime.now();
+    public LocalDate getCheckOutDate() {
+        return checkOutDate;
+    }
+
+    public void setCheckOutDate(LocalDate checkOutDate) {
+        this.checkOutDate = checkOutDate;
+        validateDateRange();
+        if (roomAllocations != null) {
+            validateRoomAllocations();
+        }
+    }
+
+    public boolean isExtraWalking() {
+        return extraWalking;
+    }
+
+    public void setExtraWalking(boolean extraWalking) {
+        this.extraWalking = extraWalking;
+        updateTotalPrice();
+    }
+
+    public boolean isExtraGrooming() {
+        return extraGrooming;
+    }
+
+    public void setExtraGrooming(boolean extraGrooming) {
+        this.extraGrooming = extraGrooming;
+        updateTotalPrice();
     }
 
     public double getTotalPrice() {
         return totalPrice;
     }
 
-    public void printInfo() {
-        System.out.println("Booking ID: " + bookingId);
-        System.out.println("Customer: " + customer.getName());
-        System.out.println("Phone: " + customer.getPhoneNumber());
-        System.out.println("Pet: " + pet.getName()
-                + " / Breed: " + pet.getBreed());
-        System.out.println("Room: " + getRoom().getRoomId());
-        System.out.println("Check-in: " + getCheckInDateTime());
-        System.out.println("Check-out: " + getCheckOutDateTime());
-        System.out.println("Status: " + getStatus());
-        System.out.println("Total: " + totalPrice);
-    }
 }

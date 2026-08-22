@@ -1,42 +1,48 @@
 package pethotel.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Customer {
 
     private String name;
     private String phoneNumber;
-    private ArrayList<Pet> pets;
+    private List<Pet> pets;
 
     public Customer(String name, String phoneNumber) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        pets = new ArrayList<Pet>();
-    }
 
-    public void addPet(Pet pet) {
-        pets.add(pet);
+        setName(name);
+        setPhoneNumber(phoneNumber);
+        this.pets = new ArrayList<>();
     }
 
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Customer name is required");
+        }
+        this.name = name.trim();
+    }
+
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public ArrayList<Pet> getPets() {
-        return pets;
-    }
-
-    public void printInfo() {
-        System.out.println("Name: " + name);
-        System.out.println("Phone: " + phoneNumber);
-        System.out.println("Pets:");
-
-        for (Pet pet : pets) {
-            pet.printInfo();
+    public void setPhoneNumber(String phoneNumber) {
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+            throw new IllegalArgumentException("Customer phone number is required");
         }
+
+        String digitsOnly = phoneNumber.replaceAll("[^0-9]", "");
+
+        if (digitsOnly.length() < 9 || digitsOnly.length() > 10) {
+            throw new IllegalArgumentException("Phone number must be between 9 and 10 digits");
+        }
+
+        this.phoneNumber = phoneNumber;
     }
+
 }

@@ -22,8 +22,6 @@ nb-configuration.xml
 nbactions.xml
 
 # Prevent local test data from causing conflicts
-src/resources/data/*.json
-src/resources/data/*.csv
 *.bak
 *.tmp
 
