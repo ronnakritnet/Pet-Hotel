@@ -2,8 +2,7 @@ package pethotel.model;
 
 public class DogRoom extends Room {
 
-    public DogRoom(String roomId, String roomName,
-            double pricePerNight, double maxWeight) {
+    public DogRoom(String roomId, String roomName,double pricePerNight, double maxWeight) {
         super(roomId, roomName, pricePerNight, maxWeight);
     }
     @Override
