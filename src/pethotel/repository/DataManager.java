@@ -1,17 +1,14 @@
-package repository;
+package pethotel.repository;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import java.io.*;
+import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
-import model.Booking;
-import model.Customer;
-import model.Room;
 
 public class DataManager {
 
@@ -20,92 +17,111 @@ public class DataManager {
     private static final String CUSTOMERS_FILE = DATA_DIR + "customers.json";
     private static final String ROOMS_FILE = DATA_DIR + "rooms.json";
 
-    private ArrayList<Booking> bookingsList;
-    private ArrayList<Customer> customersList;
-    private ArrayList<Room> roomsList;
+    private final Gson gson;
+
+    private List<Object> bookings;  
+    private List<Object> customers; 
+    private List<Object> rooms;     
 
     public DataManager() {
-        this.bookingsList = new ArrayList<>();
-        this.customersList = new ArrayList<>();
-        this.roomsList = new ArrayList<>();
-    }
-
-    public void loadAllData() {
-        System.out.println("DataManager: Loading JSON files into RAM...");
+        this.gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .setPrettyPrinting() 
+                .create();
         
         File directory = new File(DATA_DIR);
         if (!directory.exists()) {
             directory.mkdirs();
         }
 
-        this.customersList = loadListFromFile(CUSTOMERS_FILE, Customer.class);
-        this.roomsList = loadListFromFile(ROOMS_FILE, Room.class);
-        this.bookingsList = loadListFromFile(BOOKINGS_FILE, Booking.class);
-
-        System.out.println("DataManager: Data loading completed.");
+        loadAllData();
     }
 
-    private <T> ArrayList<T> loadListFromFile(String filePath, Class<T> classType) {
+    private void loadAllData() {
+        System.out.println("[DataManager] Loading all data into memory (RAM)...");
+        
+        this.customers = loadFromFile(CUSTOMERS_FILE, new TypeToken<ArrayList<Object>>() {}.getType()); 
+        System.out.println("[DataManager] Customer data loaded successfully: " + customers.size() + " records");
+
+        this.rooms = loadFromFile(ROOMS_FILE, new TypeToken<ArrayList<Object>>() {}.getType()); 
+        System.out.println("[DataManager] Room data loaded successfully: " + rooms.size() + " records");
+
+        this.bookings = loadFromFile(BOOKINGS_FILE, new TypeToken<ArrayList<Object>>() {}.getType()); 
+        System.out.println("[DataManager] Booking data loaded successfully: " + bookings.size() + " records");
+    }
+
+    private <T> List<T> loadFromFile(String filePath, Type typeOfT) {
         File file = new File(filePath);
         if (!file.exists()) {
-            System.out.println("DataManager: File " + filePath + " not found. Initializing empty collection.");
+            System.out.println("[DataManager] Data file not found at " + filePath + ". Starting with an empty list.");
             return new ArrayList<>();
         }
 
-        try {
-            String jsonContent = new String(Files.readAllBytes(Paths.get(filePath)));
-            System.out.println("DataManager: Loaded content from " + filePath);
-            return new ArrayList<>(); 
+        try (Reader reader = new FileReader(file)) {
+            List<T> list = gson.fromJson(reader, typeOfT);
+            return list != null ? list : new ArrayList<>();
         } catch (IOException e) {
-            System.err.println("DataManager Error: Cannot read file " + filePath + " - " + e.getMessage());
+            System.err.println("[DataManager] Error reading file " + filePath + ": " + e.getMessage());
             return new ArrayList<>();
         }
     }
 
-    public ArrayList<Booking> getBookings() {
-        return this.bookingsList;
+    private void saveToFile(String filePath, List<?> dataList) {
+        try (Writer writer = new FileWriter(filePath)) {
+            gson.toJson(dataList, writer);
+            System.out.println("[DataManager] Data successfully saved to " + filePath + "!");
+        } catch (IOException e) {
+            System.err.println("[DataManager] Error saving file " + filePath + ": " + e.getMessage());
+        }
     }
 
-    public ArrayList<Customer> getCustomers() {
-        return this.customersList;
+    public List<Object> getBookings() { 
+        return bookings;
     }
 
-    public ArrayList<Room> getRooms() {
-        return this.roomsList;
+    public synchronized void saveBookings(List<Object> bookings) { 
+        this.bookings = bookings;
+        saveToFile(BOOKINGS_FILE, this.bookings);
     }
 
-    public synchronized boolean saveBooking(Booking newBooking) {
-        this.bookingsList.add(newBooking);
-        return writeToFile(BOOKINGS_FILE, this.bookingsList);
+    public List<Object> getCustomers() { 
+        return customers;
     }
 
-    public synchronized boolean saveCustomer(Customer updatedCustomer) {
-        int index = -1;
-        for (int i = 0; i < customersList.size(); i++) {
-            if (customersList.get(i).getPhoneNumber().equals(updatedCustomer.getPhoneNumber())) {
-                index = i;
-                break;
+    public synchronized void saveCustomers(List<Object> customers) { 
+        this.customers = customers;
+        saveToFile(CUSTOMERS_FILE, this.customers);
+    }
+
+    public List<Object> getRooms() { 
+        return rooms;
+    }
+
+    public synchronized void saveRooms(List<Object> rooms) { 
+        this.rooms = rooms;
+        saveToFile(ROOMS_FILE, this.rooms);
+    }
+
+    private static class LocalDateAdapter extends com.google.gson.TypeAdapter<LocalDate> {
+        private final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+
+        @Override
+        public void write(com.google.gson.stream.JsonWriter out, LocalDate value) throws IOException {
+            if (value == null) {
+                out.nullValue();
+            } else {
+                out.value(formatter.format(value));
             }
         }
-        
-        if (index != -1) {
-            customersList.set(index, updatedCustomer);
-        } else {
-            customersList.add(updatedCustomer);
-        }
 
-        return writeToFile(CUSTOMERS_FILE, this.customersList);
-    }
-
-    private boolean writeToFile(String filePath, Object listToWrite) {
-        try (FileWriter writer = new FileWriter(filePath)) {
-            String mockJson = "[]"; 
-            writer.write(mockJson);
-            System.out.println("DataManager: Successfully wrote data to " + filePath);
-            return true;
-        } catch (IOException e) {
-            System.err.println("DataManager Error: Cannot write to file " + filePath + " - " + e.getMessage());
-            return false;
+        @Override
+        public LocalDate read(com.google.gson.stream.JsonReader in) throws IOException {
+            if (in.peek() == com.google.gson.stream.JsonToken.NULL) {
+                in.nextNull();
+                return null;
+            } else {
+                return LocalDate.parse(in.nextString(), formatter);
+            }
         }
     }
 }
