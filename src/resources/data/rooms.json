@@ -1,3 +1,23 @@
-{
-    "name": "USER"
-}
+[
+  {
+    "roomType": "DOG_ROOM",
+    "roomId": "RM-D01",
+    "roomName": "Standard Dog Room 1",
+    "pricePerNight": 500.0,
+    "maxWeightLimit": 15.0
+  },
+  {
+    "roomType": "DOG_ROOM",
+    "roomId": "RM-D02",
+    "roomName": "Deluxe Dog Room 2",
+    "pricePerNight": 700.0,
+    "maxWeightLimit": 30.0
+  },
+  {
+    "roomType": "CAT_ROOM",
+    "roomId": "RM-C01",
+    "roomName": "Standard Cat Room 1",
+    "pricePerNight": 400.0,
+    "maxWeightLimit": 10.0
+  }
+]

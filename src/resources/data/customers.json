@@ -1,3 +1,74 @@
-{
-    "name": "USER"
-}
+[
+  {
+    "name": "John Pork",
+    "phoneNumber": "0812345678",
+    "pets": [
+      {
+        "petType": "DOG",
+        "petId": "PET-001",
+        "name": "Yogi",
+        "breed": "Golden Retriever",
+        "weight": 12.5
+      }
+    ]
+  },
+  {
+    "name": "Jane Smith",
+    "phoneNumber": "0898765432",
+    "pets": [
+      {
+        "petType": "DOG",
+        "petId": "PET-002",
+        "name": "Rocky",
+        "breed": "Beagle",
+        "weight": 8.2
+      }
+    ]
+  },
+  {
+    "name": "Alice Brown",
+    "phoneNumber": "0821112222",
+    "pets": [
+      {
+        "petType": "CAT",
+        "petId": "PET-003",
+        "name": "Kitty",
+        "breed": "Siamese Cat",
+        "weight": 4.1
+      }
+    ]
+  },
+  {
+    "name": "Bob Wilson",
+    "phoneNumber": "0833334444",
+    "pets": [
+      {
+        "petType": "DOG",
+        "petId": "PET-004",
+        "name": "Coco",
+        "breed": "Poodle",
+        "weight": 5.5
+      }
+    ]
+  },
+  {
+    "name": "Charlie Davis",
+    "phoneNumber": "0845556666",
+    "pets": [
+      {
+        "petType": "CAT",
+        "petId": "PET-005",
+        "name": "Milo",
+        "breed": "Persian Cat",
+        "weight": 4.8
+      },
+      {
+        "petType": "CAT",
+        "petId": "PET-006",
+        "name": "Bella",
+        "breed": "British Shorthair",
+        "weight": 5.2
+      }
+    ]
+  }
+]

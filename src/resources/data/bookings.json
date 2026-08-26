@@ -1,3 +1,37 @@
-{
-    "name": "USER"
-}
+[
+  {
+    "bookingId": "BK-20260820-001",
+    "customer": {
+      "name": "John Pork",
+      "phoneNumber": "0812345678"
+    },
+    "pet": {
+      "petType": "DOG",
+      "petId": "PET-001",
+      "name": "Yogi",
+      "breed": "Golden Retriever",
+      "weight": 12.5
+    },
+    "roomAllocations": {
+      "2026-08-20": {
+        "roomType": "DOG_ROOM",
+        "roomId": "RM-D01",
+        "roomName": "Standard Dog Room 1",
+        "pricePerNight": 500.0,
+        "maxWeightLimit": 15.0
+      },
+      "2026-08-21": {
+        "roomType": "DOG_ROOM",
+        "roomId": "RM-D02",
+        "roomName": "Deluxe Dog Room 2",
+        "pricePerNight": 700.0,
+        "maxWeightLimit": 30.0
+      }
+    },
+    "checkInDate": "2026-08-20",
+    "checkOutDate": "2026-08-22",
+    "extraWalking": true,
+    "extraGrooming": false,
+    "totalPrice": 1300.0
+  }
+]
