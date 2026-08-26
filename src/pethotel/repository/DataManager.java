@@ -10,9 +10,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+ 
 public class DataManager {
 
-    private static final String DATA_DIR = "resources/data/";
+    private static final String DATA_DIR = "src/resources/data/";
     private static final String BOOKINGS_FILE = DATA_DIR + "bookings.json";
     private static final String CUSTOMERS_FILE = DATA_DIR + "customers.json";
     private static final String ROOMS_FILE = DATA_DIR + "rooms.json";
@@ -26,7 +27,7 @@ public class DataManager {
     public DataManager() {
         this.gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
-                .setPrettyPrinting() 
+                .setPrettyPrinting()
                 .create();
         
         File directory = new File(DATA_DIR);
@@ -40,13 +41,13 @@ public class DataManager {
     private void loadAllData() {
         System.out.println("[DataManager] Loading all data into memory (RAM)...");
         
-        this.customers = loadFromFile(CUSTOMERS_FILE, new TypeToken<ArrayList<Object>>() {}.getType()); 
+        this.customers = loadFromFile(CUSTOMERS_FILE, new TypeToken<ArrayList<Object>>() {}.getType());
         System.out.println("[DataManager] Customer data loaded successfully: " + customers.size() + " records");
 
-        this.rooms = loadFromFile(ROOMS_FILE, new TypeToken<ArrayList<Object>>() {}.getType()); 
+        this.rooms = loadFromFile(ROOMS_FILE, new TypeToken<ArrayList<Object>>() {}.getType());
         System.out.println("[DataManager] Room data loaded successfully: " + rooms.size() + " records");
 
-        this.bookings = loadFromFile(BOOKINGS_FILE, new TypeToken<ArrayList<Object>>() {}.getType()); 
+        this.bookings = loadFromFile(BOOKINGS_FILE, new TypeToken<ArrayList<Object>>() {}.getType());
         System.out.println("[DataManager] Booking data loaded successfully: " + bookings.size() + " records");
     }
 
@@ -75,29 +76,29 @@ public class DataManager {
         }
     }
 
-    public List<Object> getBookings() { 
+    public List<Object> getBookings() {
         return bookings;
     }
 
-    public synchronized void saveBookings(List<Object> bookings) { 
+    public synchronized void saveBookings(List<Object> bookings) {
         this.bookings = bookings;
         saveToFile(BOOKINGS_FILE, this.bookings);
     }
 
-    public List<Object> getCustomers() { 
+    public List<Object> getCustomers() {
         return customers;
     }
 
-    public synchronized void saveCustomers(List<Object> customers) { 
+    public synchronized void saveCustomers(List<Object> customers) {
         this.customers = customers;
         saveToFile(CUSTOMERS_FILE, this.customers);
     }
 
-    public List<Object> getRooms() { 
+    public List<Object> getRooms() {
         return rooms;
     }
 
-    public synchronized void saveRooms(List<Object> rooms) { 
+    public synchronized void saveRooms(List<Object> rooms) {
         this.rooms = rooms;
         saveToFile(ROOMS_FILE, this.rooms);
     }

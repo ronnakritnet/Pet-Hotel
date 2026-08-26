@@ -5,16 +5,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
+
 public class BackupManager {
 
-    private static final String DATA_DIR = "resources/data/";
+    private static final String DATA_DIR = "src/resources/data/";
     
     private static final String[] FILES_TO_BACKUP = {
         "bookings.json",
         "customers.json",
         "rooms.json"
     };
-
+    
+    
     public static void backupData() {
         System.out.println("[BackupManager] Starting system data backup...");
         
