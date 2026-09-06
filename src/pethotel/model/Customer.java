@@ -45,4 +45,14 @@ public class Customer {
         this.phoneNumber = phoneNumber;
     }
 
+    public List<Pet> getPets() {
+        return pets;
+    }
+
+    public void addPet(Pet pet) {
+        if (this.pets == null) {
+            this.pets = new ArrayList<>();
+        }
+        this.pets.add(pet);
+    }
 }

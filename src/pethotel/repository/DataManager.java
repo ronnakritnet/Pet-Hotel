@@ -10,8 +10,26 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
- 
+import pethotel.model.Booking;
+import pethotel.model.Customer;
+import pethotel.model.Room;
+import pethotel.model.Pet;
+import pethotel.model.Dog;
+import pethotel.model.Cat;
+import pethotel.model.DogRoom;
+import pethotel.model.CatRoom;
+
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonSerializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonParseException;
+
 public class DataManager {
+
+    private static DataManager instance;
 
     private static final String DATA_DIR = "src/resources/data/";
     private static final String BOOKINGS_FILE = DATA_DIR + "bookings.json";
@@ -20,13 +38,15 @@ public class DataManager {
 
     private final Gson gson;
 
-    private List<Object> bookings;  
-    private List<Object> customers; 
-    private List<Object> rooms;     
+    private ArrayList<Booking> bookings;  
+    private ArrayList<Customer> customers; 
+    private ArrayList<Room> rooms;     
 
     public DataManager() {
         this.gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .registerTypeAdapter(Pet.class, new PetAdapter())
+                .registerTypeAdapter(Room.class, new RoomAdapter())
                 .setPrettyPrinting()
                 .create();
         
@@ -38,20 +58,27 @@ public class DataManager {
         loadAllData();
     }
 
-    private void loadAllData() {
+    public static DataManager getInstance() {
+        if (instance == null) {
+            instance = new DataManager();
+        }
+        return instance;
+    }
+
+    public void loadAllData() {
         System.out.println("[DataManager] Loading all data into memory (RAM)...");
         
-        this.customers = loadFromFile(CUSTOMERS_FILE, new TypeToken<ArrayList<Object>>() {}.getType());
+        this.customers = (ArrayList<Customer>) loadFromFile(CUSTOMERS_FILE, new TypeToken<ArrayList<Customer>>() {}.getType());
         System.out.println("[DataManager] Customer data loaded successfully: " + customers.size() + " records");
 
-        this.rooms = loadFromFile(ROOMS_FILE, new TypeToken<ArrayList<Object>>() {}.getType());
+        this.rooms = (ArrayList<Room>) loadFromFile(ROOMS_FILE, new TypeToken<ArrayList<Room>>() {}.getType());
         System.out.println("[DataManager] Room data loaded successfully: " + rooms.size() + " records");
 
-        this.bookings = loadFromFile(BOOKINGS_FILE, new TypeToken<ArrayList<Object>>() {}.getType());
+        this.bookings = (ArrayList<Booking>) loadFromFile(BOOKINGS_FILE, new TypeToken<ArrayList<Booking>>() {}.getType());
         System.out.println("[DataManager] Booking data loaded successfully: " + bookings.size() + " records");
     }
 
-    private <T> List<T> loadFromFile(String filePath, Type typeOfT) {
+    private Object loadFromFile(String filePath, Type typeOfT) {
         File file = new File(filePath);
         if (!file.exists()) {
             System.out.println("[DataManager] Data file not found at " + filePath + ". Starting with an empty list.");
@@ -59,15 +86,15 @@ public class DataManager {
         }
 
         try (Reader reader = new FileReader(file)) {
-            List<T> list = gson.fromJson(reader, typeOfT);
+            Object list = gson.fromJson(reader, typeOfT);
             return list != null ? list : new ArrayList<>();
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("[DataManager] Error reading file " + filePath + ": " + e.getMessage());
             return new ArrayList<>();
         }
     }
 
-    private void saveToFile(String filePath, List<?> dataList) {
+    private void saveToFile(String filePath, Object dataList) {
         try (Writer writer = new FileWriter(filePath)) {
             gson.toJson(dataList, writer);
             System.out.println("[DataManager] Data successfully saved to " + filePath + "!");
@@ -76,31 +103,50 @@ public class DataManager {
         }
     }
 
-    public List<Object> getBookings() {
+    public ArrayList<Booking> getBookings() {
         return bookings;
     }
 
-    public synchronized void saveBookings(List<Object> bookings) {
-        this.bookings = bookings;
+    public synchronized boolean saveBooking(Booking booking) {
+        this.bookings.add(booking);
         saveToFile(BOOKINGS_FILE, this.bookings);
+        return true;
     }
 
-    public List<Object> getCustomers() {
+    public ArrayList<Customer> getCustomers() {
         return customers;
     }
 
-    public synchronized void saveCustomers(List<Object> customers) {
-        this.customers = customers;
+    public synchronized boolean saveCustomer(Customer customer) {
+        this.customers.add(customer);
         saveToFile(CUSTOMERS_FILE, this.customers);
+        return true;
     }
 
-    public List<Object> getRooms() {
+    public ArrayList<Room> getRooms() {
         return rooms;
     }
 
-    public synchronized void saveRooms(List<Object> rooms) {
-        this.rooms = rooms;
-        saveToFile(ROOMS_FILE, this.rooms);
+    public ArrayList<Pet> getPets(Customer customer) {
+        if (customer.getPets() == null) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(customer.getPets());
+    }
+
+    public ArrayList<Pet> getAllPets() {
+        ArrayList<Pet> all = new ArrayList<>();
+        for (Customer c : customers) {
+            if (c.getPets() != null) {
+                all.addAll(c.getPets());
+            }
+        }
+        return all;
+    }
+
+    public synchronized void savePet(Customer customer, Pet pet) {
+        customer.addPet(pet);
+        saveToFile(CUSTOMERS_FILE, this.customers);
     }
 
     private static class LocalDateAdapter extends com.google.gson.TypeAdapter<LocalDate> {
@@ -123,6 +169,57 @@ public class DataManager {
             } else {
                 return LocalDate.parse(in.nextString(), formatter);
             }
+        }
+    }
+
+    private static class PetAdapter implements JsonSerializer<Pet>, JsonDeserializer<Pet> {
+        @Override
+        public JsonElement serialize(Pet src, Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject obj = context.serialize(src, src.getClass()).getAsJsonObject();
+            obj.addProperty("type", src instanceof Dog ? "DOG" : "CAT");
+            return obj;
+        }
+
+        @Override
+        public Pet deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject obj = json.getAsJsonObject();
+            if (obj.has("type")) {
+                String type = obj.get("type").getAsString();
+                if ("DOG".equals(type)) {
+                    return context.deserialize(json, Dog.class);
+                } else if ("CAT".equals(type)) {
+                    return context.deserialize(json, Cat.class);
+                }
+            }
+            throw new JsonParseException("Unknown element type for Pet: " + obj);
+        }
+    }
+
+    private static class RoomAdapter implements JsonSerializer<Room>, JsonDeserializer<Room> {
+        @Override
+        public JsonElement serialize(Room src, Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject obj = context.serialize(src, src.getClass()).getAsJsonObject();
+            obj.addProperty("type", src instanceof DogRoom ? "DOG_ROOM" : "CAT_ROOM");
+            return obj;
+        }
+
+        @Override
+        public Room deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject obj = json.getAsJsonObject();
+            if (obj.has("type")) {
+                String type = obj.get("type").getAsString();
+                if ("DOG_ROOM".equals(type)) {
+                    return context.deserialize(json, DogRoom.class);
+                } else if ("CAT_ROOM".equals(type)) {
+                    return context.deserialize(json, CatRoom.class);
+                }
+            }
+            // fallback if type is missing (e.g. from an old json)
+            if (obj.has("roomName")) {
+                String name = obj.get("roomName").getAsString().toLowerCase();
+                if (name.contains("cat")) return context.deserialize(json, CatRoom.class);
+            }
+            return context.deserialize(json, DogRoom.class); // default
         }
     }
 }
