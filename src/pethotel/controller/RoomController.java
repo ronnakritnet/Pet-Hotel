@@ -14,7 +14,7 @@ public class RoomController {
         this.dataManager = dataManager;
     }
 
-    public ArrayList<Room> getRooms() {
+    public ArrayList<Room> getAllRooms() {
         return dataManager.getRooms();
     }
 

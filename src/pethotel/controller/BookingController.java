@@ -12,6 +12,7 @@ import pethotel.repository.DataManager;
 public class BookingController {
 
     private DataManager dataManager;
+    private CustomerController customerController;
     private RoomController roomController;
     private String lastMessage = "";
 
@@ -19,6 +20,7 @@ public class BookingController {
             CustomerController customerController,
             RoomController roomController) {
         this.dataManager = dataManager;
+        this.customerController = customerController;
         this.roomController = roomController;
     }
 
@@ -127,5 +129,56 @@ public class BookingController {
 
     public String getLastMessage() {
         return lastMessage;
+    }
+
+    public Booking getBookingFor(Room room, LocalDate date) {
+        if (room == null || date == null) {
+            return null;
+        }
+        for (Booking booking : dataManager.getBookings()) {
+            Room bookedRoom = booking.getRoomAllocations().get(date);
+            if (bookedRoom != null && bookedRoom.getRoomId().equalsIgnoreCase(room.getRoomId())) {
+                return booking;
+            }
+        }
+        return null;
+    }
+
+    public Booking createBooking(String customerName, String phone, String petType, String petName,
+            String breed, double weight, Room room, LocalDate checkInDate, LocalDate checkOutDate,
+            boolean extraWalking, boolean extraGrooming) {
+
+        Customer customer = customerController.findCustomerByPhone(phone);
+        if (customer == null) {
+            customer = new Customer(customerName, phone);
+            customerController.addCustomer(customer);
+        }
+
+        Pet pet = null;
+        for (Pet p : customerController.getPets(customer)) {
+            if (p.getName().equalsIgnoreCase(petName)) {
+                pet = p;
+                break;
+            }
+        }
+
+        if (pet == null) {
+            String petId = customerController.createPetId();
+            if (petType.equalsIgnoreCase("Dog")) {
+                pet = new pethotel.model.Dog(petId, petName, breed, weight);
+            } else {
+                pet = new pethotel.model.Cat(petId, petName, breed, weight);
+            }
+            customerController.addPet(customer, pet);
+        }
+
+        java.util.Map<LocalDate, Room> roomAllocations = new java.util.HashMap<>();
+        LocalDate curr = checkInDate;
+        while (curr.isBefore(checkOutDate)) {
+            roomAllocations.put(curr, room);
+            curr = curr.plusDays(1);
+        }
+
+        return createBooking(customer, pet, roomAllocations, checkInDate, checkOutDate, extraWalking, extraGrooming);
     }
 }
