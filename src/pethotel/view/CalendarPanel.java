@@ -27,7 +27,7 @@ import pethotel.model.Room;
  */
 public class CalendarPanel extends JPanel {
 
-    private static final int DAYS_SHOWN = 14;
+    private static final int DAYS_SHOWN = 7;
     private static final DateTimeFormatter HEADER_FORMAT = DateTimeFormatter.ofPattern("dd/MM");
     private static final String STATUS_AVAILABLE = "Available";
 
@@ -44,7 +44,7 @@ public class CalendarPanel extends JPanel {
         setBackground(UIStyle.COLOR_BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(15, 20, 20, 20));
 
-        JLabel title = new JLabel("Room Booking Schedule (Next 14 Days)");
+        JLabel title = new JLabel("Room Booking Schedule (Next 7 Days)");
         title.setFont(UIStyle.FONT_HEADING);
         title.setForeground(UIStyle.COLOR_TEXT_DARK);
         title.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
