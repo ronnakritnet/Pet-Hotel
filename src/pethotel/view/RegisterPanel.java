@@ -1,14 +1,11 @@
 package pethotel.view;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Window;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -18,13 +15,13 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 /**
- * Member / staff registration form, styled to match the rest of the app.
+ * Member registration form - adapted from the user-supplied RegisterPanel.
+ * Opened as a popup from {@link OwnerPanel} via {@link RegisterDialog}.
  *
- * <p>NOTE: there is currently no account-storage model (User/Customer with
- * username &amp; password) wired up in the pethotel project, so this panel
- * validates the input and shows a confirmation message, but does not save
- * the new account anywhere yet. Hook {@link #submitRegister()} up to a real
- * controller once one exists.</p>
+ * <p>Still UI-only: there is no account model/controller to persist a new
+ * member into yet, so this validates the input and shows a confirmation
+ * message only. Hook {@link #submitRegister()} up to a real controller
+ * once one exists.</p>
  */
 public class RegisterPanel extends JPanel {
 
@@ -39,101 +36,84 @@ public class RegisterPanel extends JPanel {
     private JButton cancelButton;
 
     public RegisterPanel() {
-        setLayout(new BorderLayout());
-        setBackground(UIStyle.COLOR_BACKGROUND);
 
-        add(createHeader(), BorderLayout.NORTH);
-        add(createForm(), BorderLayout.CENTER);
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        createFormPanel();
+        createBottomPanel();
+
+        setButtonActions();
     }
 
-    private JPanel createHeader() {
-        JPanel header = new JPanel();
-        header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
-        header.setBackground(UIStyle.COLOR_PRIMARY);
-        header.setBorder(BorderFactory.createEmptyBorder(18, 22, 18, 22));
+    // ==========================================
+    // Register Form
+    // ==========================================
 
-        JLabel title = new JLabel("Register");
-        title.setFont(UIStyle.FONT_TITLE);
-        title.setForeground(java.awt.Color.WHITE);
-        title.setAlignmentX(Component.LEFT_ALIGNMENT);
+    private void createFormPanel() {
 
-        JLabel subtitle = new JLabel("Create a new member account");
-        subtitle.setFont(UIStyle.FONT_SUBTITLE);
-        subtitle.setForeground(new java.awt.Color(226, 225, 253));
-        subtitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JPanel formPanel = new JPanel(new GridLayout(6, 2, 10, 10));
+        formPanel.setBorder(BorderFactory.createTitledBorder("Member Registration"));
 
-        header.add(title);
-        header.add(Box.createVerticalStrut(4));
-        header.add(subtitle);
-        return header;
-    }
-
-    private JPanel createForm() {
-        JPanel content = new JPanel();
-        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-        content.setBackground(UIStyle.COLOR_BACKGROUND);
-        content.setBorder(BorderFactory.createEmptyBorder(18, 22, 18, 22));
-
-        JPanel card = new JPanel(new GridLayout(6, 2, 10, 10));
-        card.setBackground(UIStyle.COLOR_CARD);
-        card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(UIStyle.COLOR_BORDER, 1),
-                BorderFactory.createEmptyBorder(18, 20, 18, 20)));
-
+        formPanel.add(new JLabel("Username:"));
         usernameField = new JTextField();
+        formPanel.add(usernameField);
+
+        formPanel.add(new JLabel("Password:"));
         passwordField = new JPasswordField();
+        formPanel.add(passwordField);
+
+        formPanel.add(new JLabel("Confirm Password:"));
         confirmPasswordField = new JPasswordField();
+        formPanel.add(confirmPasswordField);
+
+        formPanel.add(new JLabel("Full Name:"));
         fullNameField = new JTextField();
+        formPanel.add(fullNameField);
+
+        formPanel.add(new JLabel("Phone:"));
         phoneField = new JTextField();
+        formPanel.add(phoneField);
+
+        formPanel.add(new JLabel("Pet Type:"));
         petTypeField = new JTextField();
+        formPanel.add(petTypeField);
 
-        addField(card, "Username:", usernameField);
-        addField(card, "Password:", passwordField);
-        addField(card, "Confirm Password:", confirmPasswordField);
-        addField(card, "Full Name:", fullNameField);
-        addField(card, "Phone:", phoneField);
-        addField(card, "Pet Type:", petTypeField);
-
-        content.add(card);
-        content.add(Box.createVerticalStrut(14));
-        content.add(createButtonRow());
-
-        return content;
+        add(formPanel, BorderLayout.CENTER);
     }
 
-    private void addField(JPanel parent, String labelText, Component field) {
-        JLabel label = new JLabel(labelText);
-        label.setFont(UIStyle.FONT_BODY);
-        label.setForeground(UIStyle.COLOR_TEXT_DARK);
-        parent.add(label);
-        parent.add(field);
-    }
+    // ==========================================
+    // Bottom Panel
+    // ==========================================
 
-    private JPanel createButtonRow() {
-        JPanel row = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        row.setOpaque(false);
-        row.setAlignmentX(Component.LEFT_ALIGNMENT);
+    private void createBottomPanel() {
+
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
         cancelButton = new JButton("Cancel");
-        cancelButton.setFont(UIStyle.FONT_BUTTON);
-        cancelButton.setFocusPainted(false);
-        cancelButton.addActionListener(e -> closeWindow());
-
         registerButton = new JButton("Register");
-        registerButton.setFont(UIStyle.FONT_BUTTON);
-        registerButton.setBackground(UIStyle.COLOR_PRIMARY);
-        registerButton.setForeground(java.awt.Color.WHITE);
-        registerButton.setOpaque(true);
-        registerButton.setBorderPainted(false);
-        registerButton.setFocusPainted(false);
-        registerButton.addActionListener(e -> submitRegister());
 
-        row.add(cancelButton);
-        row.add(registerButton);
-        return row;
+        bottomPanel.add(cancelButton);
+        bottomPanel.add(registerButton);
+
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 
+    // ==========================================
+    // Button Actions
+    // ==========================================
+
+    private void setButtonActions() {
+        registerButton.addActionListener(e -> submitRegister());
+        cancelButton.addActionListener(e -> closeWindow());
+    }
+
+    // ==========================================
+    // Submit Register
+    // ==========================================
+
     private void submitRegister() {
+
         String username = usernameField.getText().trim();
         String password = new String(passwordField.getPassword()).trim();
         String confirmPassword = new String(confirmPasswordField.getPassword()).trim();
@@ -145,22 +125,27 @@ public class RegisterPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Please enter a username.");
             return;
         }
+
         if (password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter a password.");
             return;
         }
+
         if (!password.equals(confirmPassword)) {
             JOptionPane.showMessageDialog(this, "Passwords do not match.");
             return;
         }
+
         if (fullName.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter your full name.");
             return;
         }
+
         if (phone.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter your phone number.");
             return;
         }
+
         if (petType.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter your pet type.");
             return;
@@ -175,6 +160,10 @@ public class RegisterPanel extends JPanel {
 
         closeWindow();
     }
+
+    // ==========================================
+    // Close Window
+    // ==========================================
 
     private void closeWindow() {
         Window window = SwingUtilities.getWindowAncestor(this);

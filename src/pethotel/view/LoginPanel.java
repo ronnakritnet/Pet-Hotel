@@ -18,11 +18,8 @@ import javax.swing.SwingUtilities;
 
 /**
  * Login screen with a yellow header, as requested. Credentials are a
- * hardcoded staff login (phone number / 1234) since there is no user-account
- * model yet - swap out {@link #attemptLogin} if one is added later.
- *
- * <p>Login uses a phone number instead of a username, to match the
- * "Phone" field collected on {@link RegisterPanel}.</p>
+ * hardcoded staff login (staff / 1234) since there is no user-account
+ * model yet - swap out {@link #checkCredentials} if one is added later.
  *
  * <p>A "Register" link sits below the Login button and opens
  * {@link RegisterDialog}. Registration is UI-only for now (it shows a
@@ -31,10 +28,10 @@ import javax.swing.SwingUtilities;
  */
 public class LoginPanel extends JPanel {
 
-    private static final String VALID_PHONE = "0812345678";
+    private static final String VALID_USERNAME = "staff";
     private static final String VALID_PASSWORD = "1234";
 
-    private JTextField phoneField;
+    private JTextField usernameField;
     private JPasswordField passwordField;
 
     public LoginPanel(Runnable onBack, Runnable onLoginSuccess) {
@@ -90,13 +87,13 @@ public class LoginPanel extends JPanel {
                 BorderFactory.createLineBorder(UIStyle.COLOR_BORDER, 1),
                 BorderFactory.createEmptyBorder(24, 24, 24, 24)));
 
-        JLabel phoneLabel = new JLabel("Phone Number");
-        phoneLabel.setFont(UIStyle.FONT_BODY);
-        phoneLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JLabel userLabel = new JLabel("Username");
+        userLabel.setFont(UIStyle.FONT_BODY);
+        userLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        phoneField = new JTextField();
-        phoneField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 34));
-        phoneField.setAlignmentX(Component.LEFT_ALIGNMENT);
+        usernameField = new JTextField();
+        usernameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 34));
+        usernameField.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel passLabel = new JLabel("Password");
         passLabel.setFont(UIStyle.FONT_BODY);
@@ -126,9 +123,9 @@ public class LoginPanel extends JPanel {
         registerButton.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
         registerButton.addActionListener(e -> openRegisterDialog());
 
-        card.add(phoneLabel);
+        card.add(userLabel);
         card.add(Box.createVerticalStrut(4));
-        card.add(phoneField);
+        card.add(usernameField);
         card.add(Box.createVerticalStrut(14));
         card.add(passLabel);
         card.add(Box.createVerticalStrut(4));
@@ -143,14 +140,14 @@ public class LoginPanel extends JPanel {
     }
 
     private void attemptLogin(Runnable onLoginSuccess) {
-        String phone = phoneField.getText().trim();
+        String username = usernameField.getText().trim();
         String password = new String(passwordField.getPassword());
 
-        if (VALID_PHONE.equals(phone) && VALID_PASSWORD.equals(password)) {
+        if (VALID_USERNAME.equals(username) && VALID_PASSWORD.equals(password)) {
             JOptionPane.showMessageDialog(this, "Login successful");
             onLoginSuccess.run();
         } else {
-            JOptionPane.showMessageDialog(this, "Invalid phone number or password", "Login Failed",
+            JOptionPane.showMessageDialog(this, "Invalid username or password", "Login Failed",
                     JOptionPane.ERROR_MESSAGE);
         }
     }

@@ -12,15 +12,15 @@ import pethotel.controller.RoomController;
 
 /**
  * Top-level window. Holds three screens in a CardLayout:
- *  - "DASHBOARD": red "select room" button (hidden until login) + yellow
- *    "login" button, calendar below (view only)
+ *  - "DASHBOARD": yellow "login" button, calendar below (view only)
  *  - "ROOM_SELECT": pick room A/B/C/D, opens the booking form dialog
- *  - "LOGIN": staff login screen (phone number + password)
+ *  - "LOGIN": pet-owner lookup screen ({@link OwnerPanel}), reached via the
+ *    dashboard's "Login" button; "Register" opens {@link RegisterDialog}
+ *    from there.
  *
- * <p>The red "Select Room" button does not appear on the dashboard at all
- * until staff log in successfully - {@link #onLoginSuccess()} reveals it
- * on {@link DashboardPanel} once the login screen accepts the
- * credentials.</p>
+ * <p>Note: {@link OwnerPanel} looks up owners from a small hardcoded list
+ * and {@link RegisterPanel} doesn't persist anywhere yet, since there is
+ * no Customer/account model or controller wired up in the project.</p>
  */
 public class MainFrame extends JFrame {
 
@@ -40,17 +40,17 @@ public class MainFrame extends JFrame {
         setPreferredSize(new Dimension(1000, 650));
 
         dashboardPanel = new DashboardPanel(roomController, bookingController,
-                this::showRoomSelect,
                 this::showLogin);
 
         RoomSelectPanel roomSelectPanel = new RoomSelectPanel(roomController, bookingController,
                 this::showDashboard, this::onBookingCreated);
 
-        LoginPanel loginPanel = new LoginPanel(this::showDashboard, this::onLoginSuccess);
+        OwnerPanel ownerPanel = new OwnerPanel(this::showDashboard,
+                () -> showRoomSelect(bookingController, roomController));
 
         cards.add(dashboardPanel, CARD_DASHBOARD);
         cards.add(roomSelectPanel, CARD_ROOM_SELECT);
-        cards.add(loginPanel, CARD_LOGIN);
+        cards.add(ownerPanel, CARD_LOGIN);
 
         add(cards);
         pack();
@@ -63,18 +63,12 @@ public class MainFrame extends JFrame {
         cardLayout.show(cards, CARD_DASHBOARD);
     }
 
-    private void showRoomSelect() {
+    private void showRoomSelect(BookingController bookingController, RoomController roomController) {
         cardLayout.show(cards, CARD_ROOM_SELECT);
     }
 
     private void showLogin() {
         cardLayout.show(cards, CARD_LOGIN);
-    }
-
-    /** Called once the login screen accepts valid credentials - reveal the Select Room button. */
-    private void onLoginSuccess() {
-        dashboardPanel.setRoomSelectAvailable(true);
-        showDashboard();
     }
 
     private void onBookingCreated() {
