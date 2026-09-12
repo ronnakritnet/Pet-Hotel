@@ -247,6 +247,9 @@ public class RoomServicePanel extends JPanel {
         left.add(walkingCheckBox);
         left.add(groomingCheckBox);
 
+        boolean isDog = (pet instanceof pethotel.model.Dog) || "DOG".equalsIgnoreCase(pet.getPetType());
+        walkingCheckBox.setVisible(isDog);
+
         totalLabel = new JLabel("Estimated Total: 0 THB");
         totalLabel.setFont(UIStyle.FONT_HEADING);
         totalLabel.setForeground(UIStyle.COLOR_PRIMARY);
@@ -404,7 +407,7 @@ public class RoomServicePanel extends JPanel {
         for (Room room : selectedRooms.values()) {
             total += room.getPricePerNight();
         }
-        if (walkingCheckBox != null && walkingCheckBox.isSelected()) {
+        if (walkingCheckBox != null && walkingCheckBox.isVisible() && walkingCheckBox.isSelected()) {
             total += BookingController.WALKING_PRICE;
         }
         if (groomingCheckBox != null && groomingCheckBox.isSelected()) {
@@ -427,7 +430,7 @@ public class RoomServicePanel extends JPanel {
         draft.roomPerNight = new LinkedHashMap<>(selectedRooms);
         draft.checkIn = nightDates[0];
         draft.checkOut = nightDates[nightDates.length - 1].plusDays(1);
-        draft.walking = walkingCheckBox.isSelected();
+        draft.walking = walkingCheckBox.isVisible() && walkingCheckBox.isSelected();
         draft.grooming = groomingCheckBox.isSelected();
 
         double total = 0;

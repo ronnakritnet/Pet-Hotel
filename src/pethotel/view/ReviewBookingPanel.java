@@ -110,9 +110,15 @@ public class ReviewBookingPanel extends JPanel {
         content.add(createRoomDetailCard());
         content.add(Box.createVerticalStrut(14));
 
-        content.add(sectionCard("Selected Services",
-                "Dog Walking: " + (draft.walking ? "Yes (+" + (int) BookingController.WALKING_PRICE + " THB)" : "No"),
-                "Grooming: " + (draft.grooming ? "Yes (+" + (int) BookingController.GROOMING_PRICE + " THB)" : "No")));
+        boolean isDog = (draft.pet instanceof pethotel.model.Dog) || "DOG".equalsIgnoreCase(draft.pet.getPetType());
+        if (isDog) {
+            content.add(sectionCard("Selected Services",
+                    "Dog Walking: " + (draft.walking ? "Yes (+" + (int) BookingController.WALKING_PRICE + " THB)" : "No"),
+                    "Grooming: " + (draft.grooming ? "Yes (+" + (int) BookingController.GROOMING_PRICE + " THB)" : "No")));
+        } else {
+            content.add(sectionCard("Selected Services",
+                    "Grooming: " + (draft.grooming ? "Yes (+" + (int) BookingController.GROOMING_PRICE + " THB)" : "No")));
+        }
         content.add(Box.createVerticalStrut(14));
 
         content.add(createPriceSummaryCard());
