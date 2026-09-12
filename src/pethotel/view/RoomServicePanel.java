@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -28,8 +29,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.Scrollable;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
 import pethotel.controller.BookingController;
@@ -152,12 +154,13 @@ public class RoomServicePanel extends JPanel {
         content.add(Box.createVerticalStrut(10));
         content.add(createBottomSummaryCard());
 
-        JPanel northWrapper = new JPanel(new BorderLayout());
+        JPanel northWrapper = new ScrollableNorthPanel(new BorderLayout());
         northWrapper.setBackground(UIStyle.COLOR_BACKGROUND);
         northWrapper.add(content, BorderLayout.NORTH);
 
         JScrollPane scroll = new JScrollPane(northWrapper);
         scroll.setBorder(null);
+        scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.getVerticalScrollBar().setUnitIncrement(16);
         return scroll;
     }
@@ -470,5 +473,41 @@ public class RoomServicePanel extends JPanel {
         draft.estimatedTotal = total;
 
         onNext.accept(draft);
+    }
+
+    /**
+     * A wrapper panel that tracks viewport width so the main page never
+     * scrolls horizontally, isolating horizontal scrolling strictly to the room table.
+     */
+    private static class ScrollableNorthPanel extends JPanel implements Scrollable {
+
+        public ScrollableNorthPanel(java.awt.LayoutManager layout) {
+            super(layout);
+        }
+
+        @Override
+        public Dimension getPreferredScrollableViewportSize() {
+            return getPreferredSize();
+        }
+
+        @Override
+        public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return 16;
+        }
+
+        @Override
+        public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return 50;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportWidth() {
+            return true;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportHeight() {
+            return false;
+        }
     }
 }
