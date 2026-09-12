@@ -197,11 +197,12 @@ public class RoomServicePanel extends JPanel {
     }
 
     private JPanel createLegendRow() {
-        JPanel legend = new JPanel(new FlowLayout(FlowLayout.RIGHT, 14, 0));
+        JPanel legend = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 0));
         legend.setOpaque(false);
         legend.add(legendItem("Available", UIStyle.COLOR_CAL_AVAILABLE));
         legend.add(legendItem("Booked", UIStyle.COLOR_CAL_BOOKED));
         legend.add(legendItem("Selected", UIStyle.COLOR_CAL_SELECTED));
+        legend.add(legendItem("Not Suitable", new java.awt.Color(160, 160, 170)));
         return legend;
     }
 
@@ -343,20 +344,29 @@ public class RoomServicePanel extends JPanel {
 
             for (int c = 0; c < nights; c++) {
                 LocalDate date = nightDates[c];
+                boolean eligible = room.canAccommodate(pet);
                 boolean booked = !roomController.isRoomAvailable(room, date);
 
-                JToggleButton button = new JToggleButton(booked ? "Booked" : "Available");
+                JToggleButton button = new JToggleButton();
                 button.setFont(UIStyle.FONT_SMALL);
                 button.setOpaque(true);
                 button.setBorderPainted(false);
                 button.setFocusPainted(false);
                 button.setPreferredSize(new Dimension(90, 34));
 
-                if (booked) {
+                if (!eligible) {
+                    button.setText("Not Suitable");
+                    button.setEnabled(false);
+                    button.setBackground(new java.awt.Color(225, 225, 230));
+                    button.setForeground(new java.awt.Color(140, 140, 150));
+                    button.setToolTipText(room.getRoomName() + " is not suitable for " + pet.getName() + " (type or weight limit mismatch)");
+                } else if (booked) {
+                    button.setText("Booked");
                     button.setEnabled(false);
                     button.setBackground(UIStyle.COLOR_CAL_BOOKED);
                     button.setForeground(java.awt.Color.WHITE);
                 } else {
+                    button.setText("Available");
                     button.setBackground(UIStyle.COLOR_CAL_AVAILABLE);
                     button.setForeground(java.awt.Color.WHITE);
                     button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
