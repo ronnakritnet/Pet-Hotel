@@ -99,18 +99,22 @@ public class CustomerSearchPanel extends JPanel {
     }
 
     private JPanel createBody() {
-        JPanel wrapper = new JPanel();
-        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
-        wrapper.setBackground(UIStyle.COLOR_BACKGROUND);
-        wrapper.setBorder(BorderFactory.createEmptyBorder(20, 25, 10, 25));
+        JPanel content = new JPanel();
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        content.setBackground(UIStyle.COLOR_BACKGROUND);
+        content.setBorder(BorderFactory.createEmptyBorder(20, 25, 10, 25));
 
-        wrapper.add(createSearchCard());
-        wrapper.add(Box.createVerticalStrut(14));
-        wrapper.add(createCustomerCard());
-        wrapper.add(Box.createVerticalStrut(14));
-        wrapper.add(createPetsCard());
+        content.add(createSearchCard());
+        content.add(Box.createVerticalStrut(14));
+        content.add(createCustomerCard());
+        content.add(Box.createVerticalStrut(14));
+        content.add(createPetsCard());
 
-        JScrollPane scroll = new JScrollPane(wrapper);
+        JPanel northWrapper = new JPanel(new BorderLayout());
+        northWrapper.setBackground(UIStyle.COLOR_BACKGROUND);
+        northWrapper.add(content, BorderLayout.NORTH);
+
+        JScrollPane scroll = new JScrollPane(northWrapper);
         scroll.setBorder(null);
         scroll.getVerticalScrollBar().setUnitIncrement(16);
         return wrapAsSingle(scroll);
@@ -124,7 +128,12 @@ public class CustomerSearchPanel extends JPanel {
     }
 
     private JPanel createSearchCard() {
-        JPanel card = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        JPanel card = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0)) {
+            @Override
+            public Dimension getMaximumSize() {
+                return new Dimension(Integer.MAX_VALUE, getPreferredSize().height);
+            }
+        };
         card.setBackground(UIStyle.COLOR_CARD);
         card.setAlignmentX(Component.LEFT_ALIGNMENT);
         card.setBorder(BorderFactory.createCompoundBorder(
@@ -153,7 +162,12 @@ public class CustomerSearchPanel extends JPanel {
     }
 
     private JPanel createCustomerCard() {
-        JPanel card = new JPanel();
+        JPanel card = new JPanel() {
+            @Override
+            public Dimension getMaximumSize() {
+                return new Dimension(Integer.MAX_VALUE, getPreferredSize().height);
+            }
+        };
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(UIStyle.COLOR_CARD);
         card.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -194,7 +208,12 @@ public class CustomerSearchPanel extends JPanel {
     }
 
     private JPanel createPetsCard() {
-        JPanel card = new JPanel();
+        JPanel card = new JPanel() {
+            @Override
+            public Dimension getMaximumSize() {
+                return new Dimension(Integer.MAX_VALUE, getPreferredSize().height);
+            }
+        };
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(UIStyle.COLOR_CARD);
         card.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -358,38 +377,41 @@ public class CustomerSearchPanel extends JPanel {
             return;
         }
 
-        Customer customer = currentCustomer;
-        if (customer == null) {
-            customer = new Customer(name, phone);
-        } else {
-            customer.setName(name);
-            customer.setPhoneNumber(phone);
-        }
-
-        // Make sure the customer's pet list actually includes any newly added pets.
-        for (Pet pet : visiblePets) {
-            if (!customer.getPets().contains(pet)) {
-                customer.addPet(pet);
-            }
-        }
-
-        // Save immediately - so this customer (and any new pet) can be found by a
-        // phone search from now on, even if this booking never gets finished.
         try {
-            if (customerController.findCustomerByPhone(customer.getPhoneNumber()) == null) {
-                customerController.addCustomer(customer);
-            }
-            for (Pet pet : visiblePets) {
-                if (!customerController.getPets(customer).contains(pet)) {
-                    customerController.addPet(customer, pet);
+            Customer customer = customerController.findCustomerByPhone(phone);
+            if (customer == null) {
+                customer = new Customer(name, phone);
+                for (Pet pet : visiblePets) {
+                    customer.addPet(pet);
                 }
+                customerController.addCustomer(customer);
+            } else {
+                customer.setName(name);
+                for (Pet pet : visiblePets) {
+                    boolean alreadyExists = false;
+                    for (Pet p : customer.getPets()) {
+                        if (p.getPetId() != null && p.getPetId().equals(pet.getPetId())) {
+                            alreadyExists = true;
+                            break;
+                        }
+                        if (p.getName().equalsIgnoreCase(pet.getName())
+                                && p.getPetType().equalsIgnoreCase(pet.getPetType())) {
+                            alreadyExists = true;
+                            break;
+                        }
+                    }
+                    if (!alreadyExists) {
+                        customerController.addPet(customer, pet);
+                    }
+                }
+                customerController.saveCustomers();
             }
+
+            onNext.accept(customer, selectedPet);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Could not save customer info: " + ex.getMessage(),
                     "Save Warning", JOptionPane.WARNING_MESSAGE);
         }
-
-        onNext.accept(customer, selectedPet);
     }
 
     /** Resets the panel back to a blank search, ready for the next visitor. */

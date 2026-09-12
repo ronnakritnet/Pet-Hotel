@@ -56,6 +56,10 @@ public class CustomerController {
         dataManager.savePet(customer, pet);
     }
 
+    public void saveCustomers() {
+        dataManager.saveCustomers();
+    }
+
     public ArrayList<Pet> getPets(Customer customer) {
         return dataManager.getPets(customer);
     }

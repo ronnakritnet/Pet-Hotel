@@ -47,7 +47,8 @@ public class MainFrame extends JFrame {
         this.roomController = roomController;
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(1050, 700));
+        setPreferredSize(new Dimension(1100, 720));
+        setMinimumSize(new Dimension(960, 640));
 
         dashboardPanel = new DashboardPanel(roomController, bookingController, this::startSearch);
         searchPanel = new CustomerSearchPanel(customerController, this::showDashboard, this::onCustomerAndPetChosen);

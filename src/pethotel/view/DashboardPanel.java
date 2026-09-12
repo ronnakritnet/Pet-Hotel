@@ -42,7 +42,7 @@ public class DashboardPanel extends JPanel {
                 BorderFactory.createMatteBorder(0, 0, 1, 0, UIStyle.COLOR_BORDER),
                 BorderFactory.createEmptyBorder(14, 20, 14, 20)));
 
-        JButton searchButton = new JButton("Search");
+        JButton searchButton = new JButton("New Booking");
         searchButton.setFont(UIStyle.FONT_BUTTON);
         searchButton.setBackground(UIStyle.COLOR_YELLOW);
         searchButton.setForeground(UIStyle.COLOR_YELLOW_TEXT);

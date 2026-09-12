@@ -53,6 +53,8 @@ public class CalendarPanel extends JPanel {
         table.setRowHeight(32);
         table.setFont(UIStyle.FONT_BODY);
         table.getTableHeader().setFont(UIStyle.FONT_BUTTON);
+        table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setResizingAllowed(false);
         table.setEnabled(false); // view only
         table.setCellSelectionEnabled(false);
 
@@ -94,6 +96,8 @@ public class CalendarPanel extends JPanel {
             }
         };
         table.setModel(model);
+        table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setResizingAllowed(false);
         table.setDefaultRenderer(Object.class, new StatusCellRenderer());
 
         table.getColumnModel().getColumn(0).setPreferredWidth(120);

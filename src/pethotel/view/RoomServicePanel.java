@@ -119,52 +119,51 @@ public class RoomServicePanel extends JPanel {
         return header;
     }
 
-    private JPanel createBody() {
+    private JScrollPane createBody() {
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBackground(UIStyle.COLOR_BACKGROUND);
-        content.setBorder(BorderFactory.createEmptyBorder(18, 22, 18, 22));
+        content.setBorder(BorderFactory.createEmptyBorder(14, 18, 14, 18));
 
-        content.add(createStayControls());
-        content.add(Box.createVerticalStrut(14));
+        content.add(createTopControlRow());
+        content.add(Box.createVerticalStrut(10));
 
         gridPanel = new JPanel();
         gridPanel.setBackground(UIStyle.COLOR_CARD);
         gridPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         gridPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(UIStyle.COLOR_BORDER, 1),
-                BorderFactory.createEmptyBorder(16, 16, 16, 16)));
+                BorderFactory.createEmptyBorder(12, 12, 12, 12)));
         JScrollPane gridScroll = new JScrollPane(gridPanel);
         gridScroll.setAlignmentX(Component.LEFT_ALIGNMENT);
         gridScroll.setBorder(null);
-        gridScroll.setPreferredSize(new Dimension(700, 260));
+        gridScroll.setPreferredSize(new Dimension(980, 240));
+        gridScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 260));
 
         content.add(gridScroll);
         content.add(Box.createVerticalStrut(10));
-        content.add(createLegendRow());
-        content.add(Box.createVerticalStrut(14));
-        content.add(createServicesCard());
-        content.add(Box.createVerticalStrut(10));
+        content.add(createBottomSummaryCard());
 
-        totalLabel = new JLabel("Estimated Total: 0 THB");
-        totalLabel.setFont(UIStyle.FONT_HEADING);
-        totalLabel.setForeground(UIStyle.COLOR_TEXT_DARK);
-        totalLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        content.add(totalLabel);
+        JPanel northWrapper = new JPanel(new BorderLayout());
+        northWrapper.setBackground(UIStyle.COLOR_BACKGROUND);
+        northWrapper.add(content, BorderLayout.NORTH);
 
-        JPanel wrapper = new JPanel(new BorderLayout());
-        wrapper.setBackground(UIStyle.COLOR_BACKGROUND);
-        wrapper.add(content, BorderLayout.NORTH);
-        return wrapper;
+        JScrollPane scroll = new JScrollPane(northWrapper);
+        scroll.setBorder(null);
+        scroll.getVerticalScrollBar().setUnitIncrement(16);
+        return scroll;
     }
 
-    private JPanel createStayControls() {
-        JPanel card = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
+    private JPanel createTopControlRow() {
+        JPanel card = new JPanel(new BorderLayout(15, 0));
         card.setBackground(UIStyle.COLOR_CARD);
         card.setAlignmentX(Component.LEFT_ALIGNMENT);
         card.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(UIStyle.COLOR_BORDER, 1),
-                BorderFactory.createEmptyBorder(14, 16, 14, 16)));
+                BorderFactory.createEmptyBorder(10, 14, 10, 14)));
+
+        JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        left.setOpaque(false);
 
         JLabel checkInLabel = new JLabel("Check-in (yyyy-MM-dd):");
         checkInLabel.setFont(UIStyle.FONT_BODY);
@@ -177,20 +176,29 @@ public class RoomServicePanel extends JPanel {
 
         JButton updateButton = new JButton("Update");
         updateButton.setFont(UIStyle.FONT_BUTTON);
+        updateButton.setBackground(UIStyle.COLOR_PRIMARY);
+        updateButton.setForeground(java.awt.Color.WHITE);
+        updateButton.setOpaque(true);
+        updateButton.setBorderPainted(false);
         updateButton.addActionListener(e -> rebuildGrid());
 
-        card.add(checkInLabel);
-        card.add(checkInField);
-        card.add(nightsLabel);
-        card.add(nightsSpinner);
-        card.add(updateButton);
+        left.add(checkInLabel);
+        left.add(checkInField);
+        left.add(nightsLabel);
+        left.add(nightsSpinner);
+        left.add(updateButton);
+
+        JPanel right = createLegendRow();
+        right.setOpaque(false);
+
+        card.add(left, BorderLayout.WEST);
+        card.add(right, BorderLayout.EAST);
         return card;
     }
 
     private JPanel createLegendRow() {
-        JPanel legend = new JPanel(new FlowLayout(FlowLayout.LEFT, 18, 0));
+        JPanel legend = new JPanel(new FlowLayout(FlowLayout.RIGHT, 14, 0));
         legend.setOpaque(false);
-        legend.setAlignmentX(Component.LEFT_ALIGNMENT);
         legend.add(legendItem("Available", UIStyle.COLOR_CAL_AVAILABLE));
         legend.add(legendItem("Booked", UIStyle.COLOR_CAL_BOOKED));
         legend.add(legendItem("Selected", UIStyle.COLOR_CAL_SELECTED));
@@ -210,36 +218,44 @@ public class RoomServicePanel extends JPanel {
         return item;
     }
 
-    private JPanel createServicesCard() {
-        JPanel card = new JPanel();
-        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+    private JPanel createBottomSummaryCard() {
+        JPanel card = new JPanel(new BorderLayout(20, 0));
         card.setBackground(UIStyle.COLOR_CARD);
         card.setAlignmentX(Component.LEFT_ALIGNMENT);
         card.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(UIStyle.COLOR_BORDER, 1),
-                BorderFactory.createEmptyBorder(14, 20, 14, 20)));
+                BorderFactory.createEmptyBorder(12, 16, 12, 16)));
 
-        JLabel cardTitle = new JLabel("Additional Services");
+        JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 0));
+        left.setOpaque(false);
+
+        JLabel cardTitle = new JLabel("Additional Services:");
         cardTitle.setFont(UIStyle.FONT_HEADING);
-        cardTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         walkingCheckBox = new JCheckBox("Dog Walking (+" + (int) BookingController.WALKING_PRICE + " THB)");
         walkingCheckBox.setFont(UIStyle.FONT_BODY);
         walkingCheckBox.setOpaque(false);
-        walkingCheckBox.setAlignmentX(Component.LEFT_ALIGNMENT);
         walkingCheckBox.addActionListener(e -> updateTotal());
 
         groomingCheckBox = new JCheckBox("Grooming (+" + (int) BookingController.GROOMING_PRICE + " THB)");
         groomingCheckBox.setFont(UIStyle.FONT_BODY);
         groomingCheckBox.setOpaque(false);
-        groomingCheckBox.setAlignmentX(Component.LEFT_ALIGNMENT);
         groomingCheckBox.addActionListener(e -> updateTotal());
 
-        card.add(cardTitle);
-        card.add(Box.createVerticalStrut(10));
-        card.add(walkingCheckBox);
-        card.add(Box.createVerticalStrut(6));
-        card.add(groomingCheckBox);
+        left.add(cardTitle);
+        left.add(walkingCheckBox);
+        left.add(groomingCheckBox);
+
+        totalLabel = new JLabel("Estimated Total: 0 THB");
+        totalLabel.setFont(UIStyle.FONT_HEADING);
+        totalLabel.setForeground(UIStyle.COLOR_PRIMARY);
+
+        JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        right.setOpaque(false);
+        right.add(totalLabel);
+
+        card.add(left, BorderLayout.WEST);
+        card.add(right, BorderLayout.EAST);
         return card;
     }
 
