@@ -29,6 +29,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
 import pethotel.controller.BookingController;
@@ -58,6 +59,7 @@ public class RoomServicePanel extends JPanel {
     private JTextField checkInField;
     private JSpinner nightsSpinner;
     private JPanel gridPanel;
+    private JScrollPane gridScroll;
     private JCheckBox walkingCheckBox;
     private JCheckBox groomingCheckBox;
     private JLabel totalLabel;
@@ -131,14 +133,20 @@ public class RoomServicePanel extends JPanel {
         gridPanel = new JPanel();
         gridPanel.setBackground(UIStyle.COLOR_CARD);
         gridPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        gridPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(UIStyle.COLOR_BORDER, 1),
-                BorderFactory.createEmptyBorder(12, 12, 12, 12)));
-        JScrollPane gridScroll = new JScrollPane(gridPanel);
+        gridPanel.setBorder(BorderFactory.createEmptyBorder(12, 14, 12, 14));
+
+        gridScroll = new JScrollPane(gridPanel) {
+            @Override
+            public Dimension getMaximumSize() {
+                return new Dimension(Integer.MAX_VALUE, getPreferredSize().height);
+            }
+        };
         gridScroll.setAlignmentX(Component.LEFT_ALIGNMENT);
-        gridScroll.setBorder(null);
-        gridScroll.setPreferredSize(new Dimension(980, 240));
-        gridScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 260));
+        gridScroll.setBorder(BorderFactory.createLineBorder(UIStyle.COLOR_BORDER, 1));
+        gridScroll.setBackground(UIStyle.COLOR_CARD);
+        gridScroll.getViewport().setBackground(UIStyle.COLOR_CARD);
+        gridScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        gridScroll.getHorizontalScrollBar().setUnitIncrement(16);
 
         content.add(gridScroll);
         content.add(Box.createVerticalStrut(10));
@@ -155,7 +163,12 @@ public class RoomServicePanel extends JPanel {
     }
 
     private JPanel createTopControlRow() {
-        JPanel card = new JPanel(new BorderLayout(15, 0));
+        JPanel card = new JPanel(new BorderLayout(15, 0)) {
+            @Override
+            public Dimension getMaximumSize() {
+                return new Dimension(Integer.MAX_VALUE, getPreferredSize().height);
+            }
+        };
         card.setBackground(UIStyle.COLOR_CARD);
         card.setAlignmentX(Component.LEFT_ALIGNMENT);
         card.setBorder(BorderFactory.createCompoundBorder(
@@ -220,7 +233,12 @@ public class RoomServicePanel extends JPanel {
     }
 
     private JPanel createBottomSummaryCard() {
-        JPanel card = new JPanel(new BorderLayout(20, 0));
+        JPanel card = new JPanel(new BorderLayout(20, 0)) {
+            @Override
+            public Dimension getMaximumSize() {
+                return new Dimension(Integer.MAX_VALUE, getPreferredSize().height);
+            }
+        };
         card.setBackground(UIStyle.COLOR_CARD);
         card.setAlignmentX(Component.LEFT_ALIGNMENT);
         card.setBorder(BorderFactory.createCompoundBorder(
@@ -382,6 +400,12 @@ public class RoomServicePanel extends JPanel {
 
         gridPanel.revalidate();
         gridPanel.repaint();
+        if (gridScroll != null) {
+            gridScroll.revalidate();
+            gridScroll.repaint();
+        }
+        revalidate();
+        repaint();
         updateTotal();
     }
 

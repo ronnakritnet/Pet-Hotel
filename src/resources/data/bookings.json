@@ -3,7 +3,7 @@
     "bookingId": "BK1",
     "customer": {
       "name": "man",
-      "phoneNumber": "0812345677",
+      "phoneNumber": "0123456789",
       "pets": [
         {
           "petId": "NEW-2375466348800",
@@ -54,7 +54,7 @@
     "bookingId": "BK2",
     "customer": {
       "name": "man",
-      "phoneNumber": "0812345677",
+      "phoneNumber": "0123456789",
       "pets": [
         {
           "petId": "NEW-2375466348800",
