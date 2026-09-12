@@ -33,7 +33,7 @@ public abstract class Room {
         if (roomName == null || roomName.trim().isEmpty()) {
             throw new IllegalArgumentException("Room name is required");
         }
-        this.roomName = roomName.trim();;
+        this.roomName = roomName.trim();
     }
 
     public double getPricePerNight() {

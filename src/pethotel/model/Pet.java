@@ -56,4 +56,21 @@ public abstract class Pet {
         this.weight = weight;
     }
 
+    @Override
+    public String toString() {
+        return name + " (" + getPetType() + ", " + breed + ", " + weight + " kg)";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof Pet)) return false;
+        Pet pet = (Pet) o;
+        return petId != null && petId.equals(pet.petId);
+    }
+
+    @Override
+    public int hashCode() {
+        return petId != null ? petId.hashCode() : 0;
+    }
 }

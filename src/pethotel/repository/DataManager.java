@@ -145,7 +145,13 @@ public class DataManager {
     }
 
     public synchronized void savePet(Customer customer, Pet pet) {
-        customer.addPet(pet);
+        if (!customer.getPets().contains(pet)) {
+            customer.addPet(pet);
+        }
+        saveToFile(CUSTOMERS_FILE, this.customers);
+    }
+
+    public synchronized void saveCustomers() {
         saveToFile(CUSTOMERS_FILE, this.customers);
     }
 
@@ -183,11 +189,16 @@ public class DataManager {
         @Override
         public Pet deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject obj = json.getAsJsonObject();
-            if (obj.has("type")) {
-                String type = obj.get("type").getAsString();
-                if ("DOG".equals(type)) {
+            String type = null;
+            if (obj.has("type") && !obj.get("type").isJsonNull()) {
+                type = obj.get("type").getAsString();
+            } else if (obj.has("petType") && !obj.get("petType").isJsonNull()) {
+                type = obj.get("petType").getAsString();
+            }
+            if (type != null) {
+                if ("DOG".equalsIgnoreCase(type)) {
                     return context.deserialize(json, Dog.class);
-                } else if ("CAT".equals(type)) {
+                } else if ("CAT".equalsIgnoreCase(type)) {
                     return context.deserialize(json, Cat.class);
                 }
             }

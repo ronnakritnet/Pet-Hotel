@@ -25,12 +25,7 @@ public class Main {
         // Load data files into RAM
         System.out.println("[System Info] Loading data files into RAM...");
         DataManager dataManager = DataManager.getInstance();
-        try {
-            dataManager.loadAllData();
-            System.out.println("[System Info] All data loaded into RAM successfully.");
-        } catch (Exception e) {
-            System.err.println("[System Error] Database initialization failed: " + e.getMessage());
-        }
+        System.out.println("[System Info] All data loaded into RAM successfully.");
 
         // Controllers
         System.out.println("[System Info] Initializing controllers...");

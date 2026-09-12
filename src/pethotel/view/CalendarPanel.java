@@ -22,8 +22,7 @@ import pethotel.model.Room;
 
 /**
  * View-only grid showing, for each room (row) and each of the next
- * {@link #DAYS_SHOWN} days (column), whether the room is free or booked -
- * similar to a cinema seat-map.
+ * {@link #DAYS_SHOWN} days (column), whether the room is free or booked.
  */
 public class CalendarPanel extends JPanel {
 
@@ -44,7 +43,7 @@ public class CalendarPanel extends JPanel {
         setBackground(UIStyle.COLOR_BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(15, 20, 20, 20));
 
-        JLabel title = new JLabel("Room Booking Schedule (Next 7 Days)");
+        JLabel title = new JLabel("Room Booking Schedule (Next " + DAYS_SHOWN + " Days)");
         title.setFont(UIStyle.FONT_HEADING);
         title.setForeground(UIStyle.COLOR_TEXT_DARK);
         title.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
@@ -54,6 +53,8 @@ public class CalendarPanel extends JPanel {
         table.setRowHeight(32);
         table.setFont(UIStyle.FONT_BODY);
         table.getTableHeader().setFont(UIStyle.FONT_BUTTON);
+        table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setResizingAllowed(false);
         table.setEnabled(false); // view only
         table.setCellSelectionEnabled(false);
 
@@ -95,11 +96,13 @@ public class CalendarPanel extends JPanel {
             }
         };
         table.setModel(model);
+        table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setResizingAllowed(false);
         table.setDefaultRenderer(Object.class, new StatusCellRenderer());
 
-        table.getColumnModel().getColumn(0).setPreferredWidth(80);
+        table.getColumnModel().getColumn(0).setPreferredWidth(120);
         for (int c = 1; c <= DAYS_SHOWN; c++) {
-            table.getColumnModel().getColumn(c).setPreferredWidth(60);
+            table.getColumnModel().getColumn(c).setPreferredWidth(80);
         }
     }
 

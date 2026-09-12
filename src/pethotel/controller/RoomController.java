@@ -38,6 +38,9 @@ public class RoomController {
         }
 
         for (Booking booking : dataManager.getBookings()) {
+            if (booking.getRoomAllocations() == null) {
+                continue;
+            }
             Room bookedRoom = booking.getRoomAllocations().get(date);
 
             if (bookedRoom != null

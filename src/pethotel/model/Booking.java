@@ -5,6 +5,9 @@ import java.util.Map;
 
 public class Booking {
 
+    public static final double WALKING_PRICE = 100.0;
+    public static final double GROOMING_PRICE = 300.0;
+
     private String bookingId;
     private Customer customer;
     private Pet pet;
@@ -84,10 +87,10 @@ public class Booking {
             }
         }
         if (extraWalking) {
-            sum += 100.0;
+            sum += WALKING_PRICE;
         }
         if (extraGrooming) {
-            sum += 300.0;
+            sum += GROOMING_PRICE;
         }
         this.totalPrice = sum;
     }
