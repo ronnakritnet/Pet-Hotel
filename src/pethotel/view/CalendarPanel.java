@@ -50,7 +50,6 @@ public class CalendarPanel extends JPanel {
         add(title, BorderLayout.NORTH);
 
         table = new JTable();
-        // Make the schedule easier to read on a full-screen window.
         table.setRowHeight(48);
         table.setFont(UIStyle.FONT_BODY);
         table.getTableHeader().setFont(UIStyle.FONT_BUTTON);
@@ -59,8 +58,6 @@ public class CalendarPanel extends JPanel {
         table.setEnabled(false); // view only
         table.setCellSelectionEnabled(false);
 
-        // Keep the columns at the widths we set below instead of squeezing them
-        // to fit the window. This creates a horizontal scroll area.
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.getTableHeader().setPreferredSize(
                 new java.awt.Dimension(table.getTableHeader().getPreferredSize().width, 44));
@@ -112,8 +109,6 @@ public class CalendarPanel extends JPanel {
         table.getTableHeader().setResizingAllowed(false);
         table.setDefaultRenderer(Object.class, new StatusCellRenderer());
 
-        // Wider columns intentionally make the calendar larger than the screen.
-        // Use the scrollbar at the bottom to move left/right.
         table.getColumnModel().getColumn(0).setPreferredWidth(250);
         table.getColumnModel().getColumn(0).setMinWidth(250);
         for (int c = 1; c <= DAYS_SHOWN; c++) {

@@ -61,8 +61,7 @@ public class MainFrame extends JFrame {
         add(cards);
         pack();
 
-        // Open the application maximized so the dashboard fills the screen.
-        // The window can still be restored/minimized normally.
+
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         cardLayout.show(cards, CARD_DASHBOARD);
