@@ -1,3 +1,42 @@
-{
-    "name": "USER"
-}
+[
+  {
+    "name": "man",
+    "phoneNumber": "0123456789",
+    "pets": [
+      {
+        "petId": "NEW-2375466348800",
+        "name": "meen",
+        "breed": "Pug",
+        "weight": 6.0,
+        "type": "DOG"
+      },
+      {
+        "petId": "NEW-2713441995700",
+        "name": "Joy",
+        "breed": "cat",
+        "weight": 10.0,
+        "type": "CAT"
+      }
+    ]
+  },
+  {
+    "name": "Williams",
+    "phoneNumber": "0666666666",
+    "pets": [
+      {
+        "petId": "NEW-171723483336700",
+        "name": "ChiChi",
+        "breed": "RIch",
+        "weight": 5.0,
+        "type": "DOG"
+      },
+      {
+        "petId": "NEW-172388339193300",
+        "name": "DhiDhi",
+        "breed": "Rich",
+        "weight": 5.0,
+        "type": "DOG"
+      }
+    ]
+  }
+]

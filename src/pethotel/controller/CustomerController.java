@@ -44,8 +44,20 @@ public class CustomerController {
         return null;
     }
 
+    public Customer findByPhone(String phone) {
+        return findCustomerByPhone(phone);
+    }
+
+    public boolean registerCustomer(Customer customer) {
+        return addCustomer(customer);
+    }
+
     public void addPet(Customer customer, Pet pet) {
         dataManager.savePet(customer, pet);
+    }
+
+    public void saveCustomers() {
+        dataManager.saveCustomers();
     }
 
     public ArrayList<Pet> getPets(Customer customer) {
