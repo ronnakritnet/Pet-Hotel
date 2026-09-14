@@ -25,17 +25,17 @@ public class DashboardPanel extends JPanel {
     private final CalendarPanel calendarPanel;
 
     public DashboardPanel(RoomController roomController, BookingController bookingController,
-            Runnable onSearch) {
+            Runnable onSearch, Runnable onHistory) {
         setLayout(new BorderLayout());
         setBackground(UIStyle.COLOR_BACKGROUND);
 
-        add(createTopBar(onSearch), BorderLayout.NORTH);
+        add(createTopBar(onSearch, onHistory), BorderLayout.NORTH);
 
         calendarPanel = new CalendarPanel(bookingController, roomController.getAllRooms());
         add(calendarPanel, BorderLayout.CENTER);
     }
 
-    private JPanel createTopBar(Runnable onSearch) {
+    private JPanel createTopBar(Runnable onSearch, Runnable onHistory) {
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setBackground(UIStyle.COLOR_CARD);
         topBar.setBorder(BorderFactory.createCompoundBorder(
@@ -56,8 +56,20 @@ public class DashboardPanel extends JPanel {
         appTitle.setFont(UIStyle.FONT_TITLE);
         appTitle.setForeground(UIStyle.COLOR_TEXT_DARK);
 
-        JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        JButton historyButton = new JButton("Booking History");
+        historyButton.setFont(UIStyle.FONT_BUTTON);
+        historyButton.setBackground(UIStyle.COLOR_CARD);
+        historyButton.setForeground(UIStyle.COLOR_TEXT_DARK);
+        historyButton.setOpaque(true);
+        historyButton.setFocusPainted(false);
+        historyButton.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(UIStyle.COLOR_BORDER, 1),
+                BorderFactory.createEmptyBorder(8, 18, 8, 18)));
+        historyButton.addActionListener(e -> onHistory.run());
+
+        JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         right.setOpaque(false);
+        right.add(historyButton);
         right.add(searchButton);
 
         topBar.add(appTitle, BorderLayout.CENTER);

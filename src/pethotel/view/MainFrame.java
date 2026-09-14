@@ -38,6 +38,7 @@ public class MainFrame extends JFrame {
 
     private DashboardPanel dashboardPanel;
     private CustomerSearchPanel searchPanel;
+    private BookingHistoryPanel bookingHistoryPanel;
 
     public MainFrame(BookingController bookingController, CustomerController customerController,
             RoomController roomController) {
@@ -50,14 +51,18 @@ public class MainFrame extends JFrame {
         setPreferredSize(new Dimension(1100, 720));
         setMinimumSize(new Dimension(960, 640));
 
-        dashboardPanel = new DashboardPanel(roomController, bookingController, this::startSearch);
+        dashboardPanel = new DashboardPanel(roomController, bookingController, this::startSearch, this::showBookingHistory);
         searchPanel = new CustomerSearchPanel(customerController, this::showDashboard, this::onCustomerAndPetChosen);
+        bookingHistoryPanel = new BookingHistoryPanel(bookingController, this::showDashboard);
 
         cards.add(dashboardPanel, CARD_DASHBOARD);
         cards.add(flowContainer, CARD_FLOW);
 
         add(cards);
         pack();
+
+
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         cardLayout.show(cards, CARD_DASHBOARD);
     }
@@ -72,6 +77,12 @@ public class MainFrame extends JFrame {
         searchPanel.reset();
         backStack.clear();
         setFlowContent(searchPanel);
+    }
+
+    private void showBookingHistory() {
+        bookingHistoryPanel.refresh();
+        backStack.clear();
+        setFlowContent(bookingHistoryPanel);
     }
 
     private void onCustomerAndPetChosen(pethotel.model.Customer customer, pethotel.model.Pet pet) {

@@ -114,5 +114,100 @@
     "extraWalking": false,
     "extraGrooming": false,
     "totalPrice": 1700.0
+  },
+  {
+    "bookingId": "BK3",
+    "customer": {
+      "name": "Williams",
+      "phoneNumber": "0666666666",
+      "pets": [
+        {
+          "petId": "NEW-171723483336700",
+          "name": "ChiChi",
+          "breed": "RIch",
+          "weight": 5.0,
+          "type": "DOG"
+        }
+      ]
+    },
+    "pet": {
+      "petId": "NEW-171723483336700",
+      "name": "ChiChi",
+      "breed": "RIch",
+      "weight": 5.0,
+      "type": "DOG"
+    },
+    "roomAllocations": {
+      "2026-09-13": {
+        "roomId": "RM-D01",
+        "roomName": "Standard Dog Room 1",
+        "pricePerNight": 500.0,
+        "maxWeightLimit": 15.0,
+        "type": "DOG_ROOM"
+      },
+      "2026-09-14": {
+        "roomId": "RM-D02",
+        "roomName": "Deluxe Dog Room 2",
+        "pricePerNight": 700.0,
+        "maxWeightLimit": 30.0,
+        "type": "DOG_ROOM"
+      }
+    },
+    "checkInDate": "2026-09-13",
+    "checkOutDate": "2026-09-15",
+    "extraWalking": true,
+    "extraGrooming": true,
+    "totalPrice": 1600.0
+  },
+  {
+    "bookingId": "BK4",
+    "customer": {
+      "name": "Williams",
+      "phoneNumber": "0666666666",
+      "pets": [
+        {
+          "petId": "NEW-171723483336700",
+          "name": "ChiChi",
+          "breed": "RIch",
+          "weight": 5.0,
+          "type": "DOG"
+        },
+        {
+          "petId": "NEW-172388339193300",
+          "name": "DhiDhi",
+          "breed": "Rich",
+          "weight": 5.0,
+          "type": "DOG"
+        }
+      ]
+    },
+    "pet": {
+      "petId": "NEW-172388339193300",
+      "name": "DhiDhi",
+      "breed": "Rich",
+      "weight": 5.0,
+      "type": "DOG"
+    },
+    "roomAllocations": {
+      "2026-09-13": {
+        "roomId": "RM-D03",
+        "roomName": "Standard Dog Room 2",
+        "pricePerNight": 500.0,
+        "maxWeightLimit": 15.0,
+        "type": "DOG_ROOM"
+      },
+      "2026-09-14": {
+        "roomId": "RM-D03",
+        "roomName": "Standard Dog Room 2",
+        "pricePerNight": 500.0,
+        "maxWeightLimit": 15.0,
+        "type": "DOG_ROOM"
+      }
+    },
+    "checkInDate": "2026-09-13",
+    "checkOutDate": "2026-09-15",
+    "extraWalking": true,
+    "extraGrooming": true,
+    "totalPrice": 1400.0
   }
 ]

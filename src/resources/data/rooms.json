@@ -8,6 +8,13 @@
   },
   {
     "roomType": "DOG_ROOM",
+    "roomId": "RM-D03",
+    "roomName": "Standard Dog Room 2",
+    "pricePerNight": 500.0,
+    "maxWeightLimit": 15.0
+  },
+  {
+    "roomType": "DOG_ROOM",
     "roomId": "RM-D02",
     "roomName": "Deluxe Dog Room 2",
     "pricePerNight": 700.0,
