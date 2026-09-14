@@ -50,7 +50,7 @@ public class CalendarPanel extends JPanel {
         add(title, BorderLayout.NORTH);
 
         table = new JTable();
-        table.setRowHeight(48);
+        table.setRowHeight(40);
         table.setFont(UIStyle.FONT_BODY);
         table.getTableHeader().setFont(UIStyle.FONT_BUTTON);
         table.getTableHeader().setReorderingAllowed(false);
@@ -58,16 +58,15 @@ public class CalendarPanel extends JPanel {
         table.setEnabled(false); // view only
         table.setCellSelectionEnabled(false);
 
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
         table.getTableHeader().setPreferredSize(
-                new java.awt.Dimension(table.getTableHeader().getPreferredSize().width, 44));
+                new java.awt.Dimension(table.getTableHeader().getPreferredSize().width, 40));
 
         JScrollPane scrollPane = new JScrollPane(table);
-        // Always show the bottom scrollbar, like a wide spreadsheet.
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.getHorizontalScrollBar().setUnitIncrement(24);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(24);
+        scrollPane.getHorizontalScrollBar().setUnitIncrement(20);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20);
         scrollPane.setBorder(BorderFactory.createLineBorder(UIStyle.COLOR_BORDER, 1));
         add(scrollPane, BorderLayout.CENTER);
 
@@ -109,11 +108,11 @@ public class CalendarPanel extends JPanel {
         table.getTableHeader().setResizingAllowed(false);
         table.setDefaultRenderer(Object.class, new StatusCellRenderer());
 
-        table.getColumnModel().getColumn(0).setPreferredWidth(250);
-        table.getColumnModel().getColumn(0).setMinWidth(250);
+        table.getColumnModel().getColumn(0).setPreferredWidth(180);
+        table.getColumnModel().getColumn(0).setMinWidth(130);
         for (int c = 1; c <= DAYS_SHOWN; c++) {
-            table.getColumnModel().getColumn(c).setPreferredWidth(260);
-            table.getColumnModel().getColumn(c).setMinWidth(260);
+            table.getColumnModel().getColumn(c).setPreferredWidth(115);
+            table.getColumnModel().getColumn(c).setMinWidth(75);
         }
     }
 
